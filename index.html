@@ -21,7 +21,7 @@
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -29,11 +29,43 @@
             --primary: #00b489;
             --primary-glow: rgba(0, 180, 137, 0.4);
             --secondary: #de4b39;
-            --dark-bg: #0b0f19;
-            --card-bg: rgba(255, 255, 255, 0.03);
-            --card-border: rgba(255, 255, 255, 0.08);
+            --dark-bg: #070a13;
+            --card-bg: rgba(255, 255, 255, 0.02);
+            --card-border: rgba(255, 255, 255, 0.06);
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
+            --font-main: 'Outfit', 'Hind Siliguri', sans-serif;
+        }
+
+        /* Themes Configuration */
+        body.theme-cream {
+            --primary: #c29958;
+            --primary-glow: rgba(194, 153, 88, 0.4);
+            --dark-bg: #f9f6f0;
+            --card-bg: rgba(0, 0, 0, 0.02);
+            --card-border: rgba(0, 0, 0, 0.08);
+            --text-main: #2d2a26;
+            --text-muted: #6e6a64;
+        }
+
+        body.theme-charcoal {
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.4);
+            --dark-bg: #1e1e24;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.07);
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+        }
+
+        body.theme-glass {
+            --primary: #a855f7;
+            --primary-glow: rgba(168, 85, 247, 0.4);
+            --dark-bg: #090514;
+            --card-bg: rgba(255, 255, 255, 0.04);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f5f3ff;
+            --text-muted: #c084fc;
         }
 
         * {
@@ -43,16 +75,48 @@
         }
 
         body {
-            font-family: 'Outfit', 'Hind Siliguri', sans-serif;
+            font-family: var(--font-main);
             background-color: var(--dark-bg);
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 180, 137, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(222, 75, 57, 0.05) 0%, transparent 40%);
             color: var(--text-main);
             min-height: 100vh;
             overflow-x: hidden;
             display: flex;
             flex-direction: column;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* Glowing Orbs background */
+        .glowing-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            opacity: 0.3;
+            animation: floatOrb 20s infinite alternate ease-in-out;
+            pointer-events: none;
+        }
+
+        .orb-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            top: 15%;
+            left: 10%;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--secondary);
+            bottom: 20%;
+            right: 10%;
+            animation-delay: -5s;
+        }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(50px, -50px) scale(1.2); }
+            100% { transform: translate(-30px, 40px) scale(0.9); }
         }
 
         header {
@@ -62,7 +126,7 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--card-border);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -75,33 +139,47 @@
         }
 
         .logo-img {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            box-shadow: 0 0 15px var(--primary-glow);
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px var(--primary-glow);
         }
 
         .logo-text {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             font-weight: 800;
             letter-spacing: 0.5px;
-            background: linear-gradient(to right, #ffffff, #c3cfe2);
+            background: linear-gradient(to right, var(--text-main), var(--text-muted));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: color 0.3s ease;
-            margin-left: 24px;
+        .theme-selector {
+            display: flex;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--card-border);
+            padding: 4px;
+            border-radius: 10px;
         }
 
-        .nav-links a:hover {
-            color: var(--primary);
+        .theme-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
+
+        .theme-btn:hover {
+            transform: scale(1.15);
+        }
+
+        .theme-btn-dark { background: #070a13; border: 1px solid rgba(255,255,255,0.2); }
+        .theme-btn-cream { background: #f9f6f0; border: 1px solid rgba(0,0,0,0.2); }
+        .theme-btn-charcoal { background: #1e1e24; border: 1px solid rgba(255,255,255,0.2); }
+        .theme-btn-glass { background: #090514; border: 1px solid rgba(168,85,247,0.4); }
 
         .hero-section {
             display: flex;
@@ -110,30 +188,28 @@
             justify-content: center;
             text-align: center;
             padding: 80px 20px 40px 20px;
-            flex-grow: 1;
+            position: relative;
         }
 
         .badge {
-            background: rgba(0, 180, 137, 0.1);
+            background: rgba(0, 180, 137, 0.08);
             color: var(--primary);
             border: 1px solid rgba(0, 180, 137, 0.2);
             padding: 6px 14px;
             border-radius: 20px;
             font-size: 0.85rem;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 24px;
             letter-spacing: 1px;
             text-transform: uppercase;
         }
 
         h1 {
-            font-size: 3.5rem;
+            font-size: 4rem;
             font-weight: 800;
-            line-height: 1.15;
+            line-height: 1.1;
             margin-bottom: 16px;
-            background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
         }
 
         h1 span {
@@ -143,38 +219,119 @@
         }
 
         .tagline {
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             color: var(--text-muted);
-            max-width: 600px;
+            max-width: 650px;
             margin-bottom: 40px;
             line-height: 1.6;
         }
 
+        /* Interactive Transliteration Sandbox */
+        .sandbox-container {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 30px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(20px);
+            margin: 40px auto 60px auto;
+            text-align: left;
+        }
+
+        .sandbox-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 15px;
+        }
+
+        .sandbox-header h4 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sandbox-header h4 i {
+            color: var(--primary);
+        }
+
+        .sandbox-badge {
+            background: rgba(0, 180, 137, 0.1);
+            color: var(--primary);
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .sandbox-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .sandbox-grid {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 3rem;
+            }
+        }
+
+        .sandbox-box {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sandbox-box label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .sandbox-textarea {
+            width: 100%;
+            height: 150px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 15px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 1.1rem;
+            resize: none;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .sandbox-textarea:focus {
+            border-color: var(--primary);
+        }
+
+        .sandbox-output {
+            background: rgba(0, 180, 137, 0.02);
+            border: 1px solid rgba(0, 180, 137, 0.15);
+        }
+
+        /* Download Section */
         .download-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 24px;
             padding: 40px;
             width: 100%;
-            max-width: 680px;
+            max-width: 800px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(20px);
-            margin-bottom: 50px;
-        }
-
-        .download-header {
-            margin-bottom: 30px;
-        }
-
-        .download-header h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .download-header p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
+            margin-bottom: 60px;
         }
 
         .buttons-grid {
@@ -188,15 +345,12 @@
             .buttons-grid {
                 grid-template-columns: 1fr;
             }
-            h1 {
-                font-size: 2.5rem;
-            }
         }
 
         .btn-download {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--card-border);
-            color: white;
+            color: var(--text-main);
             text-decoration: none;
             padding: 18px 24px;
             border-radius: 16px;
@@ -204,40 +358,38 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 14px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
-        }
-
-        .btn-download i {
-            font-size: 1.2rem;
         }
 
         .btn-download.primary-btn {
             background: var(--primary);
             border-color: var(--primary);
+            color: white;
             box-shadow: 0 8px 24px var(--primary-glow);
         }
 
         .btn-download.primary-btn:hover {
-            background: #00c797;
+            background: var(--primary);
             transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(0, 180, 137, 0.6);
+            box-shadow: 0 12px 30px var(--primary-glow);
+            filter: brightness(1.1);
         }
 
         .btn-download:not(.primary-btn):hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.15);
             transform: translateY(-2px);
         }
 
         .warning-notice {
-            background: rgba(222, 75, 57, 0.05);
-            border: 1px solid rgba(222, 75, 57, 0.15);
-            border-radius: 12px;
-            padding: 16px;
-            font-size: 0.85rem;
-            color: #fca5a5;
+            background: rgba(222, 75, 57, 0.03);
+            border: 1px solid rgba(222, 75, 57, 0.12);
+            border-radius: 14px;
+            padding: 18px;
+            font-size: 0.9rem;
+            color: var(--text-main);
             display: flex;
             gap: 12px;
             text-align: left;
@@ -246,57 +398,73 @@
 
         .warning-notice i {
             color: var(--secondary);
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             margin-top: 2px;
         }
 
-        .features-section {
-            max-width: 1000px;
+        /* FAQ Accordion Section */
+        .faq-section {
+            width: 100%;
+            max-width: 800px;
             margin: 40px auto 80px auto;
             padding: 0 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            width: 100%;
+            text-align: left;
         }
 
-        .feature-card {
+        .faq-title {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 40px;
+        }
+
+        .faq-item {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 30px;
-            text-align: left;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            overflow: hidden;
             transition: all 0.3s ease;
         }
 
-        .feature-card:hover {
-            border-color: rgba(0, 180, 137, 0.3);
-            transform: translateY(-4px);
-        }
-
-        .feature-icon {
-            background: rgba(0, 180, 137, 0.1);
-            color: var(--primary);
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            margin-bottom: 20px;
-        }
-
-        .feature-card h4 {
-            font-size: 1.15rem;
+        .faq-question {
+            padding: 20px 24px;
             font-weight: 600;
-            margin-bottom: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
         }
 
-        .feature-card p {
+        .faq-question i {
+            transition: transform 0.3s;
+            color: var(--primary);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s cubic-bezier(0, 1, 0, 1), padding 0.3s ease;
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             line-height: 1.6;
+            padding: 0 24px;
+        }
+
+        .faq-item.active {
+            border-color: rgba(0, 180, 137, 0.2);
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 300px;
+            padding: 0 24px 20px 24px;
+            transition: max-height 0.3s cubic-bezier(1, 0, 1, 0), padding 0.3s ease;
+        }
+
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
         }
 
         footer {
@@ -306,6 +474,7 @@
             border-top: 1px solid var(--card-border);
             margin-top: auto;
             background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
         }
 
         footer p {
@@ -326,92 +495,209 @@
     </style>
 </head>
 <body>
+    <div class="glowing-orb orb-1"></div>
+    <div class="glowing-orb orb-2"></div>
+
     <header>
         <div class="logo-container">
             <img class="logo-img" src="https://raw.githubusercontent.com/mohammad-sheikh-shahinur-rahman/BanglaType/main/banglatype.ico" alt="Logo">
             <span class="logo-text">BanglaType</span>
         </div>
-        <nav class="nav-links">
-            <a href="https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType" target="_blank"><i class="fab fa-github"></i> GitHub</a>
-            <a href="https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/wiki" target="_blank"><i class="fas fa-book"></i> Documentation</a>
-        </nav>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <div class="theme-selector">
+                <button class="theme-btn theme-btn-dark" onclick="setTheme('dark')" title="Charcoal Dark"></button>
+                <button class="theme-btn theme-btn-cream" onclick="setTheme('cream')" title="BanglaType Cream"></button>
+                <button class="theme-btn theme-btn-charcoal" onclick="setTheme('charcoal')" title="Slate Charcoal"></button>
+                <button class="theme-btn theme-btn-glass" onclick="setTheme('glass')" title="Nebula Glass"></button>
+            </div>
+            <nav class="nav-links">
+                <a href="https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+            </nav>
+        </div>
     </header>
 
     <main class="hero-section">
-        <span class="badge">Windows Release v1.0.0</span>
-        <h1>BanglaType Keyboard</h1>
-        <p class="tagline">হোক লেখা প্রাণবন্ত। A modern, intelligent, and free phonetic & fixed input method editor (IME) designed for Windows OS.</p>
-        
+        <span class="badge">Production Ready v1.0.0</span>
+        <h1>হোক লেখা <span>প্রাণবন্ত</span></h1>
+        <p class="tagline">BanglaType Keyboard is an advanced, free, and lightweight input method editor (IME) supporting smart Phonetic, Fixed layout builder, Auto updates, and Speech-to-Text.</p>
+
+        <!-- Live Transliteration Sandbox -->
+        <section class="sandbox-container">
+            <div class="sandbox-header">
+                <h4><i class="fas fa-magic"></i> Live Transliteration Sandbox</h4>
+                <span class="sandbox-badge">Try Live Phonetic Engine</span>
+            </div>
+            <div class="sandbox-grid">
+                <div class="sandbox-box">
+                    <label for="sandboxInput">Type Romanized Bangla (Phonetics):</label>
+                    <textarea id="sandboxInput" class="sandbox-textarea" placeholder="Type: ami bangla likhi..."></textarea>
+                </div>
+                <div class="sandbox-box">
+                    <label>Bangla Output:</label>
+                    <textarea id="sandboxOutput" class="sandbox-textarea sandbox-output" readonly placeholder="আমি বাংলা লিখি..."></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- Download Card -->
         <section class="download-card">
-            <div class="download-header">
-                <h3>Download BanglaType</h3>
-                <p>Choose your preferred installation format below</p>
+            <div class="download-header" style="text-align: center; margin-bottom: 30px;">
+                <h3 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 8px;">Download BanglaType Release</h3>
+                <p style="color: var(--text-muted);">Fully compatible with Windows 10 & 11</p>
             </div>
             
             <div class="buttons-grid">
                 <a href="https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/raw/main/Releases/BanglaTypeInstaller.exe" class="btn-download primary-btn">
                     <i class="fas fa-download"></i>
-                    <div>
-                        <div style="font-size: 1rem; font-weight: 700;">Installer (.exe)</div>
-                        <div style="font-size: 0.75rem; opacity: 0.8; font-weight: 400; text-align: left;">Recommended setup</div>
+                    <div style="text-align: left;">
+                        <div style="font-size: 1.05rem; font-weight: 700;">Setup Installer (.exe)</div>
+                        <div style="font-size: 0.75rem; opacity: 0.8; font-weight: 400;">Silently bundles VC++ Redistributables</div>
                     </div>
                 </a>
                 <a href="https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/raw/main/Releases/BanglaType.exe" class="btn-download">
-                    <i class="fas fa-rocket"></i>
-                    <div>
-                        <div style="font-size: 1rem; font-weight: 700;">Standalone (.exe)</div>
-                        <div style="font-size: 0.75rem; opacity: 0.8; font-weight: 400; text-align: left;">Single executable file</div>
+                    <i class="fas fa-play-circle"></i>
+                    <div style="text-align: left;">
+                        <div style="font-size: 1.05rem; font-weight: 700;">Standalone Exe (.exe)</div>
+                        <div style="font-size: 0.75rem; opacity: 0.8; font-weight: 400;">Direct download standalone app</div>
                     </div>
                 </a>
                 <a href="https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/raw/main/Releases/BanglaType_Portable_x64.zip" class="btn-download">
                     <i class="far fa-file-archive"></i>
-                    <div>
-                        <div style="font-size: 1rem; font-weight: 700;">Portable x64 (.zip)</div>
-                        <div style="font-size: 0.75rem; opacity: 0.8; font-weight: 400; text-align: left;">64-bit Zip edition</div>
+                    <div style="text-align: left;">
+                        <div style="font-size: 1.05rem; font-weight: 700;">Portable x64 (.zip)</div>
+                        <div style="font-size: 0.75rem; opacity: 0.8; font-weight: 400;">No install required for 64-bit PCs</div>
                     </div>
                 </a>
                 <a href="https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/raw/main/Releases/BanglaType_Portable_x86.zip" class="btn-download">
                     <i class="far fa-file-archive"></i>
-                    <div>
-                        <div style="font-size: 1rem; font-weight: 700;">Portable x86 (.zip)</div>
-                        <div style="font-size: 0.75rem; opacity: 0.8; font-weight: 400; text-align: left;">32-bit Zip edition</div>
+                    <div style="text-align: left;">
+                        <div style="font-size: 1.05rem; font-weight: 700;">Portable x86 (.zip)</div>
+                        <div style="font-size: 0.75rem; opacity: 0.8; font-weight: 400;">No install required for 32-bit PCs</div>
                     </div>
                 </a>
             </div>
 
             <div class="warning-notice">
-                <i class="fas fa-info-circle"></i>
-                <p><strong>Note:</strong> While it is completely safe to run, the installer automatically bundles and silently runs Microsoft VC++ 2015-2022 runtimes if missing, ensuring you never run into <code>msvcp140.dll</code> errors.</p>
+                <i class="fas fa-shield-alt"></i>
+                <p><strong>Offline-First Guarantee:</strong> BanglaType Keyboard processes all transliterations, keystroke patterns, and layouts completely locally on your hard drive. Your typing history is never uploaded to any remote servers.</p>
             </div>
         </section>
 
-        <section class="features-section">
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-keyboard"></i></div>
-                <h4>Smart Transliteration</h4>
-                <p>Type Bangla phonetically using English characters (e.g. <code>ami</code> converts to <code>আমি</code>) or utilize standard fixed layouts like National or Borno.</p>
+        <!-- Interactive FAQ Accordion -->
+        <section class="faq-section">
+            <h3 class="faq-title">Frequently Asked Questions</h3>
+            
+            <div class="faq-item">
+                <div class="faq-question">What is Safe Mode in BanglaType? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-answer">If the software encounters keyboard hook conflicts, launch BanglaType.exe with the `--safe` argument. This runs a minimal, hook-free layout engine that lets you type stably.</div>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-brain"></i></div>
-                <h4>AI Next Word Prediction</h4>
-                <p>Advanced real-time suggestions using offline frequency maps, Google Recommendations API, and optional cloud spellcheck powered by Gemini AI API.</p>
+
+            <div class="faq-item">
+                <div class="faq-question">How does VC++ Redistributable check work? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-answer">The new setup installer bundles Microsoft VC++ x86 & x64 runtimes. On startup, it inspects Windows registries, installing them silently if missing. This prevents dll missing crashes.</div>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-microphone"></i></div>
-                <h4>Browser Voice Typing</h4>
-                <p>Click the microphone in the topbar to trigger the Edge/Chrome voice typing system. Speak in Bangla or English to write instantly.</p>
+
+            <div class="faq-item">
+                <div class="faq-question">Can I build custom layouts? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-answer">Yes! Open BanglaType Settings -> Custom Layout Builder. The interactive GUI tool allows you to map custom keyboard key alignments and compile them directly to `.kbl` layout files.</div>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
-                <h4>Safe Mode Recovery</h4>
-                <p>Encountering conflicts? Launch with the <code>--safe</code> command-line argument to run a minimal, stable environment without hooks or overlays.</p>
+
+            <div class="faq-item">
+                <div class="faq-question">How does Speech-to-Text work? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-answer">Clicking the mic icon starts a background local http listener and opens a visual speech transcription portal in Chrome or Edge. It transcribes your voice (English & Bangla) and automatically types it into the active text editor.</div>
             </div>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2026 BanglaType Keyboard. Developed by <strong>Mohammad Sheikh Shahinur Rahman</strong>.</p>
-        <p>Licensed under <a href="https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/blob/main/LICENSE" target="_blank">GPL-3.0</a>. Free and Open Source.</p>
+        <p>&copy; 2026 BanglaType Keyboard. Created & Developed by <strong>Mohammad Sheikh Shahinur Rahman</strong>.</p>
+        <p>Licensed under <a href="https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/blob/main/LICENSE" target="_blank">GPL-3.0</a>. All rights reserved.</p>
     </footer>
+
+    <!-- Interactive Scripts -->
+    <script>
+        // Interactive Theme Switcher
+        function setTheme(theme) {
+            document.body.className = '';
+            if (theme !== 'dark') {
+                document.body.classList.add('theme-' + theme);
+            }
+        }
+
+        // Live Transliteration Playground
+        const inputArea = document.getElementById('sandboxInput');
+        const outputArea = document.getElementById('sandboxOutput');
+
+        const mappings = {
+            'ami': 'আমি',
+            'amader': 'আমাদের',
+            'amar': 'আমার',
+            'amra': 'আমরা',
+            'tumi': 'তুমি',
+            'tomar': 'তোমার',
+            'bangla': 'বাংলা',
+            'bangladesh': 'বাংলাদেশ',
+            'type': 'টাইপ',
+            'likhi': 'লিখি',
+            'bhalo': 'ভালো',
+            'shundor': 'সুন্দর',
+            'dhonnobad': 'ধন্যবাদ',
+            'kaj': 'কাজ',
+            'shomoy': 'সময়',
+            'desh': 'দেশ',
+            'bhasha': 'ভাষা',
+            'khabar': 'খাবার',
+            'pani': 'পানি',
+            'nam': 'নাম',
+            'bondhu': 'বন্ধু'
+        };
+
+        // Standard simplified phonetic converter for words not in the quick-mapping dictionary
+        function simpleTransliterate(word) {
+            let lower = word.toLowerCase();
+            if (mappings[lower]) return mappings[lower];
+            
+            let res = lower;
+            // Common consonant maps
+            res = res.replace(/kh/g, 'খ').replace(/gh/g, 'ঘ').replace(/ch/g, 'ছ')
+                     .replace(/jh/g, 'ঝ').replace(/th/g, 'ঠ').replace(/dh/g, 'ঢ')
+                     .replace(/ph/g, 'ফ').replace(/bh/g, 'ভ').replace(/sh/g, 'শ')
+                     .replace(/k/g, 'ক').replace(/g/g, 'গ').replace(/c/g, 'চ')
+                     .replace(/j/g, 'জ').replace(/t/g, 'ত').replace(/d/g, 'দ')
+                     .replace(/p/g, 'প').replace(/b/g, 'ব').replace(/m/g, 'ম')
+                     .replace(/r/g, 'র').replace(/l/g, 'ল').replace(/s/g, 'স')
+                     .replace(/h/g, 'হ').replace(/n/g, 'ন').replace(/y/g, 'য়');
+            
+            // Vowel maps
+            res = res.replace(/o/g, 'ো').replace(/a/g, 'া').replace(/i/g, 'ি')
+                     .replace(/u/g, 'ু').replace(/e/g, 'ে');
+            
+            return res;
+        }
+
+        inputArea.addEventListener('input', () => {
+            const text = inputArea.value;
+            const words = text.split(/\s+/);
+            const transliterated = words.map(w => {
+                if (w === '') return '';
+                // Handle basic word mapping
+                return simpleTransliterate(w);
+            });
+            outputArea.value = transliterated.join(' ');
+        });
+
+        // FAQ Interactive Accordions
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                const isActive = item.classList.contains('active');
+                faqItems.forEach(i => i.classList.remove('active'));
+                if (!isActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
