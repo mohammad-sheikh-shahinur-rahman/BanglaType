@@ -1,37 +1,72 @@
-# BanglaType
-A FREE OPEN SOURCE Bangla IME for Windows OS. Developed by **Mohammad Sheikh Shahinur Rahman**.
+# ⌨️ BanglaType Keyboard
+> A Free, Open-Source, and Intelligent Bangla/English Input Method Editor (IME) for Windows OS.
 
 ---
 
-## Features
-
-### ⌨️ Multiple Layouts
-Supports **BanglaType Phonetic**, **Avro Phonetic**, **Khipro**, and **National (Fixed)**. You can also create your own with Keyboard Layout Studio!
-
-### 💡 Smart Suggestions
-Advanced suggestion feature for both phonetic and fixed layouts, with a customizable Candidate Window (Horizontal/Vertical).
-
-### 🎤 Voice & On-Screen Typing
-Use your Android phone as a mic via **BanglaType SyncType**, or type with your mouse using the On-Screen Keyboard.
-
-### ⚡ Encoding Shortcuts
-Effortlessly migrate from legacy software. Press `Ctrl + Alt + B` for ANSI (Bijoy) and `Ctrl + Alt + V` for Unicode.
+## 🌟 Developed By
+**Mohammad Sheikh Shahinur Rahman**  
+*Creator & Lead Developer of BanglaType Keyboard*
 
 ---
 
-## Migration & FAQ
+## 🚀 Key Features
+
+### 1. Smart Phonetic & Fixed Layouts
+* **Phonetic Options**: Built-in **BanglaType Phonetic** and **Avro Phonetic** transliteration engines. Type `ami` to output `আমি`.
+* **Traditional Layouts**: Full compatibility with **National (Fixed)** and **Borno** encoding.
+* **Custom Layouts**: Create, compile, and distribute your own keyboard layouts via the **Custom Layout Builder** (which produces `.kbl` XML files).
+
+### 2. AI-Powered suggestions & Next-Word Prediction
+* Real-time predictive text suggestions for both English and Bangla.
+* Integrates offline vocabulary learning, Google recommendation suggestions API, and Gemini AI formatting support.
+* Context and tone adaptation (Formal / Casual / Friendly emoji insertion).
+
+### 3. Voice Typing (Speech-to-Text)
+* Dynamic local browser-based speech typing portal supporting Google speech recognition APIs for Bangla and English.
+* Auto-pastes speech directly into active target applications with single-click visual feedback.
+
+### 4. Advanced Clipboard & Customizer
+* Saves the history of your last 10 copied texts for quick reuse.
+* Variation customizer teaches the phonetic parser your custom Romanized spellings.
+
+### 5. Silent VC++ Redistributables & Zero-Error Deployment
+* The installer silently detects and installs required **Microsoft Visual C++ 2015-2022 runtimes (x86 & x64)** to resolve `msvcp140.dll` errors automatically.
+* Clean installation and complete uninstallation profiles configured.
+
+### 6. Crash-Free Guarantee (Safe Mode)
+* Launch with the argument `BanglaType.exe --safe` to bypass advanced keyboard hook / suggestion engine startup cycles for absolute typing recovery and stable debugging.
+
+---
+
+## 📖 Quick Start & Migration Guide
 
 ### Switching from Avro?
-Sets toggle key to `F12` and keeps the Phonetic layout you love. BanglaType comes with a built-in Avro Phonetic layout. Just switch your layout to Avro in the Topbar and keep typing exactly as you did before.
+* Sets the default layout toggle key to `F12`.
+* Select **Avro Phonetic (Open)** in the topbar dropdown and continue typing exactly as you used to.
 
 ### Switching from Bijoy?
-Sets toggle key to `F10`, activates National (Traditional) layout, and enables `Ctrl + Alt + B` (ANSI) / `Ctrl + Alt + V` (Unicode) shortcuts. You can use the National (Fixed) layout in BanglaType, which follows the same mapping as Bijoy. Additionally, BanglaType supports ANSI (Bijoy) encoding—simply press `Ctrl + Alt + B` to switch to ANSI mode and type in your favorite legacy software like Photoshop or Illustrator.
+* Sets the toggle key to `F10`, activates the National layout, and enables `Ctrl + Alt + B` (ANSI) / `Ctrl + Alt + V` (Unicode) shortcuts.
+* Type in legacy graphic design tools (such as Illustrator or Photoshop) by switching to ANSI encoding.
 
-### Is BanglaType free of cost?
-Yes. BanglaType and all its flagship features, including Voice Typing via SyncType, are completely free of cost for everyone.
+### First-Run Setup Wizard
+* When launched for the first time, a setup wizard guides you through choosing theme defaults (Cream, Dark, Charcoal, Glassmorphism), interface languages, and privacy agreements.
 
-### Is my typing data private?
-Yes. Privacy is our top priority. BanglaType processes all suggestions and transliteration locally on your device. We do not collect or send your keystrokes to any server.
+---
 
-### How does Voice Typing work?
-BanglaType Voice Typing uses the Google Speech Recognition Service to convert your speech to text. The converted text is processed locally, and BanglaType does not store, record, or analyze your speech data or keystrokes.
+## 🔒 Privacy & Safety
+* **100% Offline-First**: Transliteration, local suggestions, layout compilations, and clipboard management run entirely on your local machine.
+* **No Telemetry**: Keystrokes are never logged, stored, or sent to external servers.
+
+---
+
+## 📥 Downloads & Releases
+Download standalone executables, portable ZIP packages, and the professional setup installer directly from the [GitHub Releases Page](https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/releases/tag/v1.0.0) or locate them inside the [Releases/](file:///C:/Users/shahi/Downloads/borno-lite-main/Releases) folder:
+* **Professional Setup Installer**: [BanglaTypeInstaller.exe](file:///C:/Users/shahi/Downloads/borno-lite-main/Releases/BanglaTypeInstaller.exe)
+* **Standalone Executable**: [BanglaType.exe](file:///C:/Users/shahi/Downloads/borno-lite-main/Releases/BanglaType.exe)
+* **64-bit Portable Edition**: [BanglaType_Portable_x64.zip](file:///C:/Users/shahi/Downloads/borno-lite-main/Releases/BanglaType_Portable_x64.zip)
+* **32-bit Portable Edition**: [BanglaType_Portable_x86.zip](file:///C:/Users/shahi/Downloads/borno-lite-main/Releases/BanglaType_Portable_x86.zip)
+
+---
+
+## 📄 License
+This project is licensed under the GPL-3.0 License. See the [LICENSE](file:///C:/Users/shahi/Downloads/borno-lite-main/LICENSE) file for more details.
