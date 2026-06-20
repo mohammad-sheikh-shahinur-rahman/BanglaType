@@ -1,0 +1,18 @@
+# Build and output directories
+bin/
+obj/
+Output/
+bin_x86/
+bin_x64/
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# System files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
