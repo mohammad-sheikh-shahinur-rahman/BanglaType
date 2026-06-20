@@ -39,7 +39,7 @@ Namespace My.Resources
         Friend ReadOnly Property ResourceManager() As Global.System.Resources.ResourceManager
             Get
                 If Object.ReferenceEquals(resourceMan, Nothing) Then
-                    Dim temp As Global.System.Resources.ResourceManager = New Global.System.Resources.ResourceManager("CodepotroBornoLite.Resources", GetType(Resources).Assembly)
+                    Dim temp As Global.System.Resources.ResourceManager = New Global.System.Resources.ResourceManager("CodepotroBanglaType.Resources", GetType(Resources).Assembly)
                     resourceMan = temp
                 End If
                 Return resourceMan
@@ -63,9 +63,9 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized resource of type System.Byte[].
         '''</summary>
-        Friend ReadOnly Property Borno() As Byte()
+        Friend ReadOnly Property BanglaType() As Byte()
             Get
-                Dim obj As Object = ResourceManager.GetObject("Borno", resourceCulture)
+                Dim obj As Object = ResourceManager.GetObject("BanglaType", resourceCulture)
                 Return CType(obj,Byte())
             End Get
         End Property
@@ -73,9 +73,9 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized resource of type System.Byte[].
         '''</summary>
-        Friend ReadOnly Property Borno_Encoding() As Byte()
+        Friend ReadOnly Property BanglaType_Encoding() As Byte()
             Get
-                Dim obj As Object = ResourceManager.GetObject("Borno_Encoding", resourceCulture)
+                Dim obj As Object = ResourceManager.GetObject("BanglaType_Encoding", resourceCulture)
                 Return CType(obj,Byte())
             End Get
         End Property
@@ -83,9 +83,9 @@ Namespace My.Resources
         '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Bitmap.
         '''</summary>
-        Friend ReadOnly Property borno_lite() As System.Drawing.Bitmap
+        Friend ReadOnly Property BanglaType_lite() As System.Drawing.Bitmap
             Get
-                Dim obj As Object = ResourceManager.GetObject("borno_lite", resourceCulture)
+                Dim obj As Object = ResourceManager.GetObject("BanglaType_lite", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
             End Get
         End Property

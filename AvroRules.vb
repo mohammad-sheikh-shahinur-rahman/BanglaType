@@ -1,11 +1,11 @@
-'
+﻿'
 '
 '   This program Is free software; you can redistribute it And/Or modify
 '   it under the terms Of the GNU General Public License As published by
 '   the Free Software Foundation; either version 3 Of the License, Or
 '   (at your option) any later version.
 '
-'   Borno Lite "Advance" additions: Avro Phonetic rule data.
+'   BanglaType Lite "Advance" additions: Avro Phonetic rule data.
 '
 '   This is a VB.NET port of the open OmicronLab Avro Phonetic dictionary.
 '   Vowels resolve to their full form at a word boundary / after a vowel and to

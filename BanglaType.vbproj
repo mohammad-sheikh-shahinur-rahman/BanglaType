@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{3854C5CE-EFED-4A3D-AD28-2A20C8C1FCEB}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <StartupObject>CodepotroBornoLite.My.MyApplication</StartupObject>
-    <RootNamespace>CodepotroBornoLite</RootNamespace>
+    <StartupObject>CodepotroBanglaType.My.MyApplication</StartupObject>
+    <RootNamespace>CodepotroBanglaType</RootNamespace>
     <AssemblyName>BanglaType</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>WindowsForms</MyType>
@@ -164,7 +164,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\Release\data\keyboard layouts\Borno.kbl" />
+    <None Include="bin\Release\data\keyboard layouts\BanglaType.kbl" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
@@ -178,14 +178,14 @@
     <None Include="Resources\National.kbl" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Borno Encoding.kbl" />
-    <None Include="Resources\Borno.kbl" />
+    <None Include="Resources\BanglaType Encoding.kbl" />
+    <None Include="Resources\BanglaType.kbl" />
     <None Include="Resources\close_icon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\borno_lite.png">
+    <None Include="Resources\BanglaType_lite.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

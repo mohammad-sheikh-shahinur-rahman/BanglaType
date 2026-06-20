@@ -32,7 +32,7 @@ Namespace My
         
         <Global.System.Diagnostics.DebuggerStepThroughAttribute()>  _
         Protected Overrides Sub OnCreateMainForm()
-            Me.MainForm = Global.CodepotroBornoLite.MainUI
+            Me.MainForm = Global.CodepotroBanglaType.MainUI
         End Sub
     End Class
 End Namespace

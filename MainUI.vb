@@ -1,4 +1,4 @@
-'
+﻿'
 '
 '   This program Is free software; you can redistribute it And/Or modify
 '   it under the terms Of the GNU General Public License As published by
@@ -29,7 +29,7 @@ Public Class MainUI
     Public Shared isPhoneticSelected As Boolean = False
     Public Shared IsSafeMode As Boolean = False
 
-    ' Borno Lite "Advance" additions
+    ' BanglaType Lite "Advance" additions
     Public Shared isAvroSelected As Boolean = False
     Public Shared AvroEngine As AvroParser
     Public Shared SuggWindow As SuggestionWindow
@@ -61,21 +61,21 @@ Public Class MainUI
 
     Public Shared Parser As Object
 
-    Private Sub writeBornoLayout(ByVal layout As String)
+    Private Sub writeBanglaTypeLayout(ByVal layout As String)
         Dim baseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BanglaType", "keyboard layouts")
         Dim filePath = Path.Combine(baseDir, layout & ".kbl")
         If Not File.Exists(filePath) Then
             Directory.CreateDirectory(baseDir)
-            File.WriteAllBytes(filePath, My.Resources.Borno)
+            File.WriteAllBytes(filePath, My.Resources.BanglaType)
         End If
     End Sub
 
-    Private Sub writeBornoEncodingLayout(ByVal layout As String)
+    Private Sub writeBanglaTypeEncodingLayout(ByVal layout As String)
         Dim baseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BanglaType", "keyboard layouts")
         Dim filePath = Path.Combine(baseDir, layout & ".kbl")
         If Not File.Exists(filePath) Then
             Directory.CreateDirectory(baseDir)
-            File.WriteAllBytes(filePath, My.Resources.Borno_Encoding)
+            File.WriteAllBytes(filePath, My.Resources.BanglaType_Encoding)
         End If
     End Sub
 
@@ -121,8 +121,8 @@ Public Class MainUI
                 clipboardTimer.Start()
             End If
 
-            writeBornoLayout("Borno")
-            writeBornoEncodingLayout("Borno Encoding")
+            writeBanglaTypeLayout("BanglaType")
+            writeBanglaTypeEncodingLayout("BanglaType Encoding")
             writeNationalLayout("National")
 
             ' Robust DLL load with Try...Catch to handle platform mismatch or missing dependencies on 64-bit Systems.
@@ -163,7 +163,7 @@ Public Class MainUI
 
             ' Logo PictureBox
             Try
-                logoBox.Image = My.Resources.borno_lite
+                logoBox.Image = My.Resources.BanglaType_lite
             Catch
             End Try
 
@@ -1263,7 +1263,7 @@ Public Class MainUI
     Public Shared Sub CheckForUpdates(ByVal silent As Boolean)
         Dim t As New System.Threading.Thread(Sub()
             Try
-                Dim updateUrl As String = "https://raw.githubusercontent.com/shahinur/borno-lite/main/update.json"
+                Dim updateUrl As String = "https://raw.githubusercontent.com/shahinur/BanglaType-lite/main/update.json"
                 Dim request As System.Net.HttpWebRequest = CType(System.Net.WebRequest.Create(updateUrl), System.Net.HttpWebRequest)
                 request.Method = "GET"
                 request.Timeout = 5000

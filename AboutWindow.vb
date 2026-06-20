@@ -1,4 +1,4 @@
-Imports System.Windows.Forms
+﻿Imports System.Windows.Forms
 Imports System.Drawing
 
 Public Class AboutWindow
@@ -66,7 +66,7 @@ Public Class AboutWindow
         ft.AppendLine()
         ft.AppendLine("2. Typing Modes:")
         ft.AppendLine("   • English: Standard QWERTY layout input.")
-        ft.AppendLine("   • Bangla: Standard fixed layouts (National, Borno, etc.) or Avro Phonetic layout.")
+        ft.AppendLine("   • Bangla: Standard fixed layouts (National, BanglaType, etc.) or Avro Phonetic layout.")
         ft.AppendLine("   • Banglish: Type Bangla phonetically using English characters (e.g. typing 'ami' outputting 'আমি').")
         ft.AppendLine()
         ft.AppendLine("3. Voice Typing Mode (Speech-to-Text):")

@@ -1,4 +1,4 @@
-'
+﻿'
 '
 '   This program Is free software; you can redistribute it And/Or modify
 '   it under the terms Of the GNU General Public License As published by
@@ -780,7 +780,7 @@ LoopStart:
         Return False
     End Function
 
-    ' --- suggestion + current-word helpers (Borno Lite "Advance") ---------
+    ' --- suggestion + current-word helpers (BanglaType Lite "Advance") ---------
 
     ''' <summary>The Bangla word currently being composed (phonetic/avro use the parsed text; fixed uses the layout buffer).</summary>
     Private Function CurrentWord() As String

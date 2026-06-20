@@ -64,9 +64,9 @@ Namespace My
     Friend Module MySettingsProperty
         
         <Global.System.ComponentModel.Design.HelpKeywordAttribute("My.Settings")>  _
-        Friend ReadOnly Property Settings() As Global.CodepotroBornoLite.My.MySettings
+        Friend ReadOnly Property Settings() As Global.CodepotroBanglaType.My.MySettings
             Get
-                Return Global.CodepotroBornoLite.My.MySettings.Default
+                Return Global.CodepotroBanglaType.My.MySettings.Default
             End Get
         End Property
     End Module

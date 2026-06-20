@@ -1,18 +1,18 @@
-'
+﻿'
 '
 '   This program Is free software; you can redistribute it And/Or modify
 '   it under the terms Of the GNU General Public License As published by
 '   the Free Software Foundation; either version 3 Of the License, Or
 '   (at your option) any later version.
 '
-'   Borno Lite "Advance" additions: persistent settings store.
+'   BanglaType Lite "Advance" additions: persistent settings store.
 '
 
 Imports System.IO
 Imports System.Xml.Linq
 
 ''' <summary>
-''' Lightweight persistent settings for Borno Lite, stored as data\settings.xml.
+''' Lightweight persistent settings for BanglaType Lite, stored as data\settings.xml.
 ''' Mirrors the existing first-run file pattern used for keyboard layouts.
 ''' </summary>
 Module AppSettings

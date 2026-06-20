@@ -121,14 +121,14 @@
   <data name="close_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\close_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="borno_lite" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\borno_lite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="BanglaType_lite" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BanglaType_lite.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Borno" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Borno.kbl;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="BanglaType" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BanglaType.kbl;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="Borno_Encoding" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Borno Encoding.kbl;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="BanglaType_Encoding" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\BanglaType Encoding.kbl;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="National" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\National.kbl;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
