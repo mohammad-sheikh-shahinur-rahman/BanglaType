@@ -1,4 +1,4 @@
-﻿Imports System.Windows.Forms
+Imports System.Windows.Forms
 Imports System.Drawing
 
 Public Class AboutWindow
@@ -34,11 +34,12 @@ Public Class AboutWindow
         ' Developer Label
         lblDev = New Label() With {
             .Text = "Created by Mohammad Sheikh Shahinur Rahman" & vbCrLf & _
-                    "Version: " & Application.ProductVersion & " (Release Build)" & vbCrLf & _
-                    "Copyright © Mohammad Sheikh Shahinur Rahman. All Rights Reserved.",
-            .Font = New Font("Segoe UI", 9.5!, FontStyle.Regular),
+                    "Software Engineer | CTO | DevOps Architect | Independent Researcher | Writer & Poet" & vbCrLf & _
+                    "Website: shahinurrahman.com  |  LinkedIn: mohammad-sheikh-shahinur-rahman" & vbCrLf & _
+                    "Version: " & Application.ProductVersion & " (Release Build) | Copyright © Mohammad Sheikh Shahinur Rahman.",
+            .Font = New Font("Segoe UI", 9.0!, FontStyle.Regular),
             .Location = New Point(15, 55),
-            .Size = New Size(470, 55)
+            .Size = New Size(470, 70)
         }
 
         ' Features TextBox
@@ -47,8 +48,8 @@ Public Class AboutWindow
             .ReadOnly = True,
             .ScrollBars = ScrollBars.Vertical,
             .Font = New Font("Segoe UI", 9.5!, FontStyle.Regular),
-            .Location = New Point(15, 125),
-            .Size = New Size(455, 285),
+            .Location = New Point(15, 135),
+            .Size = New Size(455, 275),
             .BackColor = Color.White,
             .ForeColor = Color.Black
         }

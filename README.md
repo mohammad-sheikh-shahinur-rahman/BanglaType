@@ -5,7 +5,10 @@
 
 ## 🌟 Developed By
 **Mohammad Sheikh Shahinur Rahman**  
-*Creator & Lead Developer of BanglaType Keyboard*
+*Software Engineer | CTO | DevOps Architect | Independent Researcher | Writer & Poet*
+
+* 🌐 **Website**: [shahinurrahman.com](https://shahinurrahman.com/)
+* 💼 **LinkedIn**: [mohammad-sheikh-shahinur-rahman](https://www.linkedin.com/in/mohammad-sheikh-shahinur-rahman/)
 
 ---
 
