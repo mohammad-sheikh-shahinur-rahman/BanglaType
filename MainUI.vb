@@ -1475,6 +1475,9 @@ Public Class MainUI
         Next
         settingsMenu.Items.Add(miThemes)
 
+        Dim miLayouts As New ToolStripMenuItem("Keyboard Layout") With {.Name = "layoutMenu"}
+        settingsMenu.Items.Add(miLayouts)
+
         Dim miSmartPrediction As New ToolStripMenuItem("Smart Word Prediction Settings...")
         AddHandler miSmartPrediction.Click, Sub()
                                                 Using dlg As New SmartPredictionWindow()
@@ -1591,6 +1594,22 @@ Public Class MainUI
 
         AddHandler settingsMenu.Opening, Sub(sender As Object, e As System.ComponentModel.CancelEventArgs)
                                              miStartWithWindows.Checked = IsAutoStartEnabled()
+                                             
+                                             ' Update Keyboard Layout submenu dynamically
+                                             miLayouts.DropDownItems.Clear()
+                                             For Each it As Object In LayoutList.Items
+                                                 Dim src As ToolStripMenuItem = TryCast(it, ToolStripMenuItem)
+                                                 If src IsNot Nothing Then
+                                                     Dim child As New ToolStripMenuItem(src.Text.Trim())
+                                                     child.Tag = src.Tag
+                                                     child.Checked = (Convert.ToInt32(src.Tag) = crlay)
+                                                     AddHandler child.Click, Sub(s As Object, ev As EventArgs)
+                                                                                 Dim c As ToolStripMenuItem = CType(s, ToolStripMenuItem)
+                                                                                 ApplySelection(New ToolStripMenuItem(c.Text) With {.Tag = c.Tag})
+                                                                             End Sub
+                                                     miLayouts.DropDownItems.Add(child)
+                                                 End If
+                                             Next
                                              For Each item As ToolStripItem In miHotkey.DropDownItems
                                                  Dim cMi As ToolStripMenuItem = TryCast(item, ToolStripMenuItem)
                                                  If cMi IsNot Nothing Then
