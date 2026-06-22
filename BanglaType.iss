@@ -2,7 +2,7 @@
 ; SEE THE INNO SETUP DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "BanglaType"
-#define MyAppVersion "1.0.0.0"
+#define MyAppVersion "1.0.1"
 #define MyAppPublisher "Mohammad Sheikh Shahinur Rahman"
 #define MyAppExeName "BanglaType.exe"
 
@@ -32,12 +32,14 @@ Source: "bin\Release\BanglaType.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\BanglaType.exe.config"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\BanglaType.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "bin\Release\Resources\*"; DestDir: "{app}\Resources"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "data\*"; DestDir: "{app}\data"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; Visual C++ Redistributables
 Source: "bin\Redist\vc_redist.x86.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall
 Source: "bin\Redist\vc_redist.x64.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall; Check: Is64BitInstallMode
 
 [Icons]
 Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{commonprograms}\Uninstall {#MyAppName}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 Name: "{userstartup}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: startup
 
@@ -50,6 +52,7 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\data"
+Type: filesandordirs; Name: "{userappdata}\BanglaType"
 
 [Code]
 function NotVCRedistx86Installed: Boolean;

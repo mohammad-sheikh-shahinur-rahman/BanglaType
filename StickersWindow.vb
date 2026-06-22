@@ -1,137 +1,125 @@
-Imports System.Windows.Forms
-Imports System.Drawing
+'
+'
+'   This program Is free software; you can redistribute it And/Or modify
+'   it under the terms Of the GNU General Public License As published by
+'   the Free Software Foundation; either version 3 Of the License, Or
+'   (at your option) any later version.
+'
+'   BanglaType Lite "Advance" additions: emoji / sticker picker.
+'
 
+Imports System.Drawing
+Imports System.Drawing.Drawing2D
+Imports System.Windows.Forms
+
+''' <summary>
+''' A simple emoji / kaomoji picker. Clicking a glyph pastes it into the active
+''' application via <see cref="MainUI.PasteText"/>.
+''' </summary>
 Public Class StickersWindow
     Inherits Form
 
-    Private flowLayout As FlowLayoutPanel
-    Private lblTitle As Label
+    Private ReadOnly _stickers As String() = New String() {
+        "😀", "😁", "😂", "🤣", "😊", "😍", "😘", "😎",
+        "🤔", "😢", "😭", "😡", "👍", "👎", "🙏", "👏",
+        "❤️", "🔥", "🎉", "✨", "💯", "✅", "❌", "⭐",
+        "🌹", "🌸", "☀️", "🌙", "🇧🇩", "📚", "☕", "🎂",
+        "ভালো", "ধন্যবাদ", "শুভকামনা", "অভিনন্দন",
+        "(ʘ‿ʘ)", "¯\_(ツ)_/¯", "(╯°□°)╯", "ᕕ( ᐛ )ᕗ"}
 
     Public Sub New()
         InitializeComponent()
     End Sub
 
     Private Sub InitializeComponent()
-        Me.Text = "BanglaType Stickers"
-        Me.Size = New Size(400, 320)
+        Me.Text = "Stickers & GIFs"
+        Me.Size = New Size(360, 320)
+        Me.FormBorderStyle = FormBorderStyle.None
         Me.StartPosition = FormStartPosition.CenterScreen
-        Me.FormBorderStyle = FormBorderStyle.FixedToolWindow
-        Me.MaximizeBox = False
-        Me.MinimizeBox = False
-        Me.ShowIcon = False
         Me.TopMost = True
+        Me.ShowInTaskbar = False
+        Me.DoubleBuffered = True
+        Me.BackColor = Color.FromArgb(20, 20, 22)
 
-        lblTitle = New Label() With {
-            .Text = "Select a Sticker to Paste:",
+        Dim pnlTitle As New Panel() With {.Dock = DockStyle.Top, .Height = 36, .BackColor = Color.FromArgb(28, 28, 30)}
+        AddHandler pnlTitle.MouseDown, AddressOf Header_MouseDown
+        Dim lblTitle As New Label() With {
+            .Text = "🎨 Stickers & Emoji",
             .Font = New Font("Segoe UI", 10.0!, FontStyle.Bold),
-            .Location = New Point(15, 10),
-            .Size = New Size(370, 20)
-        }
+            .ForeColor = Color.White, .Location = New Point(12, 8), .AutoSize = True}
+        AddHandler lblTitle.MouseDown, AddressOf Header_MouseDown
+        Dim btnClose As New Button() With {
+            .Text = "✕", .Font = New Font("Segoe UI", 9.0!), .ForeColor = Color.DarkGray,
+            .BackColor = Color.Transparent, .FlatStyle = FlatStyle.Flat,
+            .Size = New Size(36, 36), .Location = New Point(Me.Width - 36, 0), .Cursor = Cursors.Hand}
+        btnClose.FlatAppearance.BorderSize = 0
+        btnClose.FlatAppearance.MouseOverBackColor = Color.FromArgb(232, 17, 35)
+        AddHandler btnClose.Click, Sub() Me.Close()
+        pnlTitle.Controls.Add(lblTitle)
+        pnlTitle.Controls.Add(btnClose)
+        Me.Controls.Add(pnlTitle)
 
-        flowLayout = New FlowLayoutPanel() With {
-            .Location = New Point(15, 35),
-            .Size = New Size(365, 230),
-            .AutoScroll = True
-        }
+        Dim flow As New FlowLayoutPanel() With {
+            .Location = New Point(8, 44), .Size = New Size(344, 230),
+            .AutoScroll = True, .BackColor = Color.FromArgb(20, 20, 22)}
 
-        ' Create and add stickers
-        Dim stickerList As New List(Of StickerItem)()
-        stickerList.Add(New StickerItem("👍", "সাবাস!", Color.FromArgb(24, 119, 242))) ' Blue
-        stickerList.Add(New StickerItem("❤️", "ভালোবাসা", Color.FromArgb(222, 75, 57))) ' Red
-        stickerList.Add(New StickerItem("😂", "হাহা", Color.FromArgb(255, 193, 7))) ' Yellow
-        stickerList.Add(New StickerItem("🙏", "ধন্যবাদ", Color.FromArgb(0, 180, 137))) ' Green
-        stickerList.Add(New StickerItem("😮", "অসাধারণ!", Color.FromArgb(255, 112, 67))) ' Orange
-        stickerList.Add(New StickerItem("😢", "দুঃখিত", Color.FromArgb(69, 90, 100))) ' Slate
-
-        For Each item In stickerList
-            Dim tempItem = item
-            Dim btn As New PictureBox() With {
-                .Size = New Size(100, 100),
-                .SizeMode = PictureBoxSizeMode.CenterImage,
-                .Cursor = Cursors.Hand,
-                .Margin = New Padding(5)
-            }
-            Dim bmp As Bitmap = CreateStickerBitmap(tempItem.Emoji, tempItem.Text, tempItem.BackColor)
-            btn.Image = bmp
-            AddHandler btn.Click, Sub()
-                                      Try
-                                          Clipboard.SetImage(bmp)
-                                          System.Threading.Thread.Sleep(100)
-                                          SendKeys.SendWait("^v")
-                                          Me.Close()
-                                      Catch ex As Exception
-                                          MessageBox.Show("Failed to copy sticker: " & ex.Message)
-                                      End Try
-                                  End Sub
-            flowLayout.Controls.Add(btn)
+        For Each s As String In _stickers
+            Dim sticker As String = s
+            Dim btn As New Button() With {
+                .Text = sticker,
+                .Font = New Font("Segoe UI Emoji", 12.0!),
+                .ForeColor = Color.White, .BackColor = Color.FromArgb(38, 38, 42),
+                .FlatStyle = FlatStyle.Flat, .Size = New Size(74, 40), .Cursor = Cursors.Hand}
+            btn.FlatAppearance.BorderSize = 0
+            btn.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 180, 137)
+            AddHandler btn.Click, Sub() MainUI.PasteText(sticker)
+            flow.Controls.Add(btn)
         Next
+        Me.Controls.Add(flow)
 
-        Me.Controls.Add(lblTitle)
-        Me.Controls.Add(flowLayout)
+        Dim lblHint As New Label() With {
+            .Text = "Click a sticker to insert it into the active app.",
+            .Font = New Font("Segoe UI", 8.0!), .ForeColor = Color.Gray,
+            .Location = New Point(12, 282), .Size = New Size(336, 18)}
+        Me.Controls.Add(lblHint)
 
-        ' Apply Current Theme if available
-        Try
-            If System.Windows.Forms.Application.OpenForms.Count > 0 Then
-                Dim main As MainUI = TryCast(System.Windows.Forms.Application.OpenForms(0), MainUI)
-                if main IsNot Nothing Then
-                    Me.BackColor = main.ThemeTopbarBack
-                    lblTitle.ForeColor = main.currentButtonFore
-                End If
-            End If
-        Catch
-        End Try
+        ApplyRoundedCorners()
     End Sub
 
-    Private Function CreateStickerBitmap(ByVal emoji As String, ByVal text As String, ByVal backColor As Color) As Bitmap
-        Dim bmp As New Bitmap(100, 100)
-        Using g As Graphics = Graphics.FromImage(bmp)
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias
-            g.Clear(Color.Transparent)
+    Private Sub Header_MouseDown(ByVal sender As Object, ByVal e As MouseEventArgs)
+        If e.Button = MouseButtons.Left Then
+            MainUI.ReleaseCapture()
+            MainUI.SendMessage(Handle, MainUI.WM_NCLBUTTONDOWN, MainUI.HT_CAPTION, 0)
+        End If
+    End Sub
 
-            ' Draw card background
-            Using path As New System.Drawing.Drawing2D.GraphicsPath()
-                Dim rect As New Rectangle(5, 5, 90, 90)
-                Dim radius As Integer = 10
-                Dim r2 As Integer = radius * 2
-                path.StartFigure()
-                path.AddArc(rect.X, rect.Y, r2, r2, 180, 90)
-                path.AddArc(rect.Right - r2, rect.Y, r2, r2, 270, 90)
-                path.AddArc(rect.Right - r2, rect.Bottom - r2, r2, r2, 0, 90)
-                path.AddArc(rect.X, rect.Bottom - r2, r2, r2, 90, 90)
-                path.CloseFigure()
-
-                Using brush As New SolidBrush(backColor)
-                    g.FillPath(brush, path)
-                End Using
-            End Using
-
-            ' Draw emoji
-            Using fontEmoji As New Font("Segoe UI Emoji", 24.0!, FontStyle.Regular)
-                Using brush As New SolidBrush(Color.White)
-                    Dim sf As New StringFormat() With {.Alignment = StringAlignment.Center, .LineAlignment = StringAlignment.Center}
-                    g.DrawString(emoji, fontEmoji, brush, New RectangleF(5, 10, 90, 45), sf)
-                End Using
-            End Using
-
-            ' Draw text
-            Using fontText As New Font("Segoe UI", 10.0!, FontStyle.Bold)
-                Using brush As New SolidBrush(Color.White)
-                    Dim sf As New StringFormat() With {.Alignment = StringAlignment.Center, .LineAlignment = StringAlignment.Center}
-                    g.DrawString(text, fontText, brush, New RectangleF(5, 55, 90, 35), sf)
-                End Using
-            End Using
-        End Using
-        Return bmp
+    Private Function GetRoundedRectPath(ByVal rect As Rectangle, ByVal radius As Integer) As GraphicsPath
+        Dim path As New GraphicsPath()
+        Dim r2 As Integer = radius * 2
+        path.StartFigure()
+        path.AddArc(rect.X, rect.Y, r2, r2, 180, 90)
+        path.AddArc(rect.Right - r2, rect.Y, r2, r2, 270, 90)
+        path.AddArc(rect.Right - r2, rect.Bottom - r2, r2, r2, 0, 90)
+        path.AddArc(rect.X, rect.Bottom - r2, r2, r2, 90, 90)
+        path.CloseFigure()
+        Return path
     End Function
 
-    Private Structure StickerItem
-        Public Emoji As String
-        Public Text As String
-        Public BackColor As Color
-        Public Sub New(ByVal e As String, ByVal t As String, ByVal c As Color)
-            Emoji = e
-            Text = t
-            BackColor = c
-        End Sub
-    End Structure
+    Private Sub ApplyRoundedCorners()
+        Using path As GraphicsPath = GetRoundedRectPath(New Rectangle(0, 0, Width, Height), 10)
+            Me.Region = New Region(path)
+        End Using
+    End Sub
+
+    Protected Overrides Sub OnPaintBackground(ByVal e As PaintEventArgs)
+        MyBase.OnPaintBackground(e)
+        Dim rect As New Rectangle(0, 0, Me.ClientSize.Width - 1, Me.ClientSize.Height - 1)
+        e.Graphics.SmoothingMode = SmoothingMode.AntiAlias
+        Using path As GraphicsPath = GetRoundedRectPath(rect, 10)
+            Using p As New Pen(Color.FromArgb(60, 60, 64), 1.5)
+                e.Graphics.DrawPath(p, path)
+            End Using
+        End Using
+    End Sub
+
 End Class

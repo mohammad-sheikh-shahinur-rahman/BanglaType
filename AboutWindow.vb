@@ -98,9 +98,6 @@ Public Class AboutWindow
         ft.AppendLine()
         ft.AppendLine("• BanglaType is 100% offline-first. Your keystrokes and typing patterns are processed and saved locally on your machine and are never transmitted.")
         ft.AppendLine("• No telemetry, tracking, or ads are included in the application.")
-        ft.AppendLine()
-        ft.AppendLine("💡 Support & Updates:")
-        ft.AppendLine("Go to Settings -> Check for Updates to keep BanglaType up to date.")
         
         txtFeatures.Text = ft.ToString()
         ' Selection at start to avoid focusing and highlighting text

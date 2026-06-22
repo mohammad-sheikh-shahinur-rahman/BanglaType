@@ -1,4 +1,4 @@
-﻿'
+'
 '
 '   This program Is free software; you can redistribute it And/Or modify
 '   it under the terms Of the GNU General Public License As published by
@@ -87,6 +87,784 @@ Public Class MainUI
             File.WriteAllBytes(filePath, My.Resources.National)
         End If
     End Sub
+
+    Private Sub writeProbhatLayout(ByVal layoutName As String)
+        Dim baseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BanglaType", "keyboard layouts")
+        Dim filePath = Path.Combine(baseDir, layoutName & ".kbl")
+
+        Dim dataFolder = GetDataFolder()
+        Dim jsonPath = Path.Combine(dataFolder, "Probhat.json")
+
+        If File.Exists(jsonPath) Then
+            Try
+                Dim jsonContent = File.ReadAllText(jsonPath, Encoding.UTF8)
+                Dim kblContent = ParseJsonLayoutToKbl(jsonContent, "Probhat")
+                If Not String.IsNullOrEmpty(kblContent) Then
+                    Directory.CreateDirectory(baseDir)
+                    File.WriteAllText(filePath, kblContent, Encoding.UTF8)
+                    Return
+                End If
+            Catch ex As Exception
+            End Try
+        End If
+
+        ' Static Fallback if JSON file is missing or failed to parse
+        If Not File.Exists(filePath) Then
+            Directory.CreateDirectory(baseDir)
+            Dim sb As New System.Text.StringBuilder()
+            sb.AppendLine("<?xml version=""1.0"" encoding=""utf-8"" standalone=""yes""?>")
+            sb.AppendLine("<Layout>")
+            sb.AppendLine("  <Name>Probhat</Name>")
+            sb.AppendLine("  <Keys>")
+            sb.AppendLine("    <Key vkCode=""32"">")
+            sb.AppendLine("      <Normal> </Normal>")
+            sb.AppendLine("      <Shift> </Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""48"">")
+            sb.AppendLine("      <Normal>০</Normal>")
+            sb.AppendLine("      <Shift>)</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""49"">")
+            sb.AppendLine("      <Normal>১</Normal>")
+            sb.AppendLine("      <Shift>!</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""50"">")
+            sb.AppendLine("      <Normal>২</Normal>")
+            sb.AppendLine("      <Shift>@</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""51"">")
+            sb.AppendLine("      <Normal>৩</Normal>")
+            sb.AppendLine("      <Shift>#</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""52"">")
+            sb.AppendLine("      <Normal>৪</Normal>")
+            sb.AppendLine("      <Shift>৳</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""53"">")
+            sb.AppendLine("      <Normal>৫</Normal>")
+            sb.AppendLine("      <Shift>%</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""54"">")
+            sb.AppendLine("      <Normal>৬</Normal>")
+            sb.AppendLine("      <Shift>^</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""55"">")
+            sb.AppendLine("      <Normal>৭</Normal>")
+            sb.AppendLine("      <Shift>ঞ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""56"">")
+            sb.AppendLine("      <Normal>৮</Normal>")
+            sb.AppendLine("      <Shift>ৎ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""57"">")
+            sb.AppendLine("      <Normal>৯</Normal>")
+            sb.AppendLine("      <Shift>(</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""65"">")
+            sb.AppendLine("      <Normal>া</Normal>")
+            sb.AppendLine("      <Shift>অ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""66"">")
+            sb.AppendLine("      <Normal>ব</Normal>")
+            sb.AppendLine("      <Shift>ভ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""67"">")
+            sb.AppendLine("      <Normal>চ</Normal>")
+            sb.AppendLine("      <Shift>ছ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""68"">")
+            sb.AppendLine("      <Normal>ড</Normal>")
+            sb.AppendLine("      <Shift>ঢ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""69"">")
+            sb.AppendLine("      <Normal>ী</Normal>")
+            sb.AppendLine("      <Shift>ঈ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""70"">")
+            sb.AppendLine("      <Normal>ত</Normal>")
+            sb.AppendLine("      <Shift>থ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""71"">")
+            sb.AppendLine("      <Normal>গ</Normal>")
+            sb.AppendLine("      <Shift>ঘ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""72"">")
+            sb.AppendLine("      <Normal>হ</Normal>")
+            sb.AppendLine("      <Shift>ঃ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""73"">")
+            sb.AppendLine("      <Normal>ি</Normal>")
+            sb.AppendLine("      <Shift>ই</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""74"">")
+            sb.AppendLine("      <Normal>জ</Normal>")
+            sb.AppendLine("      <Shift>ঝ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""75"">")
+            sb.AppendLine("      <Normal>ক</Normal>")
+            sb.AppendLine("      <Shift>খ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""76"">")
+            sb.AppendLine("      <Normal>ল</Normal>")
+            sb.AppendLine("      <Shift>ং</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""77"">")
+            sb.AppendLine("      <Normal>ম</Normal>")
+            sb.AppendLine("      <Shift>ঙ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""78"">")
+            sb.AppendLine("      <Normal>ন</Normal>")
+            sb.AppendLine("      <Shift>ণ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""79"">")
+            sb.AppendLine("      <Normal>ও</Normal>")
+            sb.AppendLine("      <Shift>ঔ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""80"">")
+            sb.AppendLine("      <Normal>প</Normal>")
+            sb.AppendLine("      <Shift>ফ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""81"">")
+            sb.AppendLine("      <Normal>দ</Normal>")
+            sb.AppendLine("      <Shift>ধ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""82"">")
+            sb.AppendLine("      <Normal>র</Normal>")
+            sb.AppendLine("      <Shift>ড়</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""83"">")
+            sb.AppendLine("      <Normal>স</Normal>")
+            sb.AppendLine("      <Shift>ষ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""84"">")
+            sb.AppendLine("      <Normal>ট</Normal>")
+            sb.AppendLine("      <Shift>ঠ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""85"">")
+            sb.AppendLine("      <Normal>ু</Normal>")
+            sb.AppendLine("      <Shift>উ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""86"">")
+            sb.AppendLine("      <Normal>আ</Normal>")
+            sb.AppendLine("      <Shift>ঋ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""87"">")
+            sb.AppendLine("      <Normal>ূ</Normal>")
+            sb.AppendLine("      <Shift>ঊ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""88"">")
+            sb.AppendLine("      <Normal>শ</Normal>")
+            sb.AppendLine("      <Shift>ঢ়</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""89"">")
+            sb.AppendLine("      <Normal>এ</Normal>")
+            sb.AppendLine("      <Shift>ঐ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""90"">")
+            sb.AppendLine("      <Normal>য়</Normal>")
+            sb.AppendLine("      <Shift>য</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""186"">")
+            sb.AppendLine("      <Normal>;</Normal>")
+            sb.AppendLine("      <Shift>:</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""187"">")
+            sb.AppendLine("      <Normal>=</Normal>")
+            sb.AppendLine("      <Shift>+</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""188"">")
+            sb.AppendLine("      <Normal>,</Normal>")
+            sb.AppendLine("      <Shift>ৃ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""189"">")
+            sb.AppendLine("      <Normal>-</Normal>")
+            sb.AppendLine("      <Shift>_</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""190"">")
+            sb.AppendLine("      <Normal>।</Normal>")
+            sb.AppendLine("      <Shift>ঁ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""191"">")
+            sb.AppendLine("      <Normal>্</Normal>")
+            sb.AppendLine("      <Shift>?</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""192"">")
+            sb.AppendLine("      <Normal>‍</Normal>")
+            sb.AppendLine("      <Shift>~</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""219"">")
+            sb.AppendLine("      <Normal>ে</Normal>")
+            sb.AppendLine("      <Shift>ৈ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""220"">")
+            sb.AppendLine("      <Normal>‌</Normal>")
+            sb.AppendLine("      <Shift>॥</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""221"">")
+            sb.AppendLine("      <Normal>ো</Normal>")
+            sb.AppendLine("      <Shift>ৌ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""222"">")
+            sb.AppendLine("      <Normal>'</Normal>")
+            sb.AppendLine("      <Shift>&quot;</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("  </Keys>")
+            sb.AppendLine("  <Combinations>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্অ</Input>")
+            sb.AppendLine("      <Output>া</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্আ</Input>")
+            sb.AppendLine("      <Output>া</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ই</Input>")
+            sb.AppendLine("      <Output>ি</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ঈ</Input>")
+            sb.AppendLine("      <Output>ী</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্উ</Input>")
+            sb.AppendLine("      <Output>ু</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ঊ</Input>")
+            sb.AppendLine("      <Output>ূ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ঋ</Input>")
+            sb.AppendLine("      <Output>ৃ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্এ</Input>")
+            sb.AppendLine("      <Output>ে</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ঐ</Input>")
+            sb.AppendLine("      <Output>ৈ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ও</Input>")
+            sb.AppendLine("      <Output>ো</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ঔ</Input>")
+            sb.AppendLine("      <Output>ৌ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("  </Combinations>")
+            sb.AppendLine("</Layout>")
+            File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8)
+        End If
+    End Sub
+
+    Private Function ParseJsonLayoutToKbl(ByVal json As String, ByVal layoutName As String) As String
+        Try
+            Dim matches = System.Text.RegularExpressions.Regex.Matches(json, """Key_([a-zA-Z0-9_]+)_(Normal|AltGr)""\s*:\s*""([^""]*)""")
+            Dim keyMap As New Dictionary(Of String, Dictionary(Of String, String))()
+
+            For Each m As System.Text.RegularExpressions.Match In matches
+                Dim keyName = m.Groups(1).Value
+                Dim state = m.Groups(2).Value
+                Dim val = m.Groups(3).Value
+
+                If Not keyMap.ContainsKey(keyName) Then
+                    keyMap(keyName) = New Dictionary(Of String, String)()
+                End If
+                keyMap(keyName)(state) = val
+            Next
+
+            Dim sb As New System.Text.StringBuilder()
+            sb.AppendLine("<?xml version=""1.0"" encoding=""utf-8"" standalone=""yes""?>")
+            sb.AppendLine("<Layout>")
+            sb.AppendLine("  <Name>" & layoutName & "</Name>")
+            sb.AppendLine("  <Keys>")
+
+            sb.AppendLine("    <Key vkCode=""32"">")
+            sb.AppendLine("      <Normal> </Normal>")
+            sb.AppendLine("      <Shift> </Shift>")
+            sb.AppendLine("    </Key>")
+
+            Dim keyMappings As New Dictionary(Of Integer, Tuple(Of String, String))()
+
+            For vk As Integer = 65 To 90
+                Dim charLower = ChrW(vk + 32).ToString()
+                Dim charUpper = ChrW(vk).ToString()
+                keyMappings(vk) = Tuple.Create(charLower, charUpper)
+            Next
+
+            keyMappings(48) = Tuple.Create("0", "ParenRight")
+            keyMappings(49) = Tuple.Create("1", "Exclaim")
+            keyMappings(50) = Tuple.Create("2", "At")
+            keyMappings(51) = Tuple.Create("3", "Hash")
+            keyMappings(52) = Tuple.Create("4", "Dollar")
+            keyMappings(53) = Tuple.Create("5", "Percent")
+            keyMappings(54) = Tuple.Create("6", "Circum")
+            keyMappings(55) = Tuple.Create("7", "Ampersand")
+            keyMappings(56) = Tuple.Create("8", "Asterisk")
+            keyMappings(57) = Tuple.Create("9", "ParenLeft")
+
+            keyMappings(186) = Tuple.Create("Semicolon", "Colon")
+            keyMappings(187) = Tuple.Create("Equals", "Plus")
+            keyMappings(188) = Tuple.Create("Comma", "Less")
+            keyMappings(189) = Tuple.Create("Minus", "UnderScore")
+            keyMappings(190) = Tuple.Create("Period", "Greater")
+            keyMappings(191) = Tuple.Create("Slash", "Question")
+            keyMappings(192) = Tuple.Create("Grave", "Tilde")
+            keyMappings(219) = Tuple.Create("BracketLeft", "BraceLeft")
+            keyMappings(220) = Tuple.Create("BackSlash", "Bar")
+            keyMappings(221) = Tuple.Create("BracketRight", "BraceRight")
+            keyMappings(222) = Tuple.Create("Apostrophe", "Quote")
+
+            For Each kvp In keyMappings
+                Dim vk = kvp.Key
+                Dim normKey = kvp.Value.Item1
+                Dim shiftKey = kvp.Value.Item2
+
+                Dim normVal = ""
+                Dim shiftVal = ""
+
+                If keyMap.ContainsKey(normKey) AndAlso keyMap(normKey).ContainsKey("Normal") Then
+                    normVal = keyMap(normKey)("Normal")
+                End If
+                If keyMap.ContainsKey(shiftKey) AndAlso keyMap(shiftKey).ContainsKey("Normal") Then
+                    shiftVal = keyMap(shiftKey)("Normal")
+                End If
+
+                If normVal = "E" Then normVal = ""
+                If shiftVal = "E" Then shiftVal = ""
+
+                normVal = EscapeXml(normVal)
+                shiftVal = EscapeXml(shiftVal)
+
+                sb.AppendLine("    <Key vkCode=""" & vk & """>")
+                sb.AppendLine("      <Normal>" & normVal & "</Normal>")
+                sb.AppendLine("      <Shift>" & shiftVal & "</Shift>")
+                sb.AppendLine("    </Key>")
+            Next
+
+            sb.AppendLine("  </Keys>")
+            sb.AppendLine("  <Combinations>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্অ</Input>")
+            sb.AppendLine("      <Output>া</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্আ</Input>")
+            sb.AppendLine("      <Output>া</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ই</Input>")
+            sb.AppendLine("      <Output>ি</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ঈ</Input>")
+            sb.AppendLine("      <Output>ী</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্উ</Input>")
+            sb.AppendLine("      <Output>ু</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ঊ</Input>")
+            sb.AppendLine("      <Output>ূ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ঋ</Input>")
+            sb.AppendLine("      <Output>ৃ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্এ</Input>")
+            sb.AppendLine("      <Output>ে</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ঐ</Input>")
+            sb.AppendLine("      <Output>ৈ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ও</Input>")
+            sb.AppendLine("      <Output>ো</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ঔ</Input>")
+            sb.AppendLine("      <Output>ৌ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("  </Combinations>")
+            sb.AppendLine("</Layout>")
+
+            Return sb.ToString()
+        Catch ex As Exception
+            Return ""
+        End Try
+    End Function
+
+    Private Function EscapeXml(ByVal val As String) As String
+        If String.IsNullOrEmpty(val) Then Return ""
+        Return val.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("""", "&quot;").Replace("'", "&apos;")
+    End Function
+
+    Private Function GetDataFolder() As String
+        Try
+            Dim prodPath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data"))
+            If Directory.Exists(prodPath) Then Return prodPath
+            Dim devPath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "data"))
+            If Directory.Exists(devPath) Then Return devPath
+        Catch
+        End Try
+        Return ""
+    End Function
+
+    Private Sub writeBanglaUniversalLayout(ByVal layout As String)
+        Dim baseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BanglaType", "keyboard layouts")
+        Dim filePath = Path.Combine(baseDir, layout & ".kbl")
+        If Not File.Exists(filePath) Then
+            Directory.CreateDirectory(baseDir)
+            Dim sb As New System.Text.StringBuilder()
+            sb.AppendLine("<?xml version=""1.0"" encoding=""utf-8"" standalone=""yes""?>")
+            sb.AppendLine("<Layout>")
+            sb.AppendLine("  <Name>Bangla Universal</Name>")
+            sb.AppendLine("  <Keys>")
+            sb.AppendLine("    <Key vkCode=""32"">")
+            sb.AppendLine("      <Normal> </Normal>")
+            sb.AppendLine("      <Shift> </Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""48"">")
+            sb.AppendLine("      <Normal>০</Normal>")
+            sb.AppendLine("      <Shift>)</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""49"">")
+            sb.AppendLine("      <Normal>১</Normal>")
+            sb.AppendLine("      <Shift>!</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""50"">")
+            sb.AppendLine("      <Normal>২</Normal>")
+            sb.AppendLine("      <Shift>@</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""51"">")
+            sb.AppendLine("      <Normal>৩</Normal>")
+            sb.AppendLine("      <Shift>#</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""52"">")
+            sb.AppendLine("      <Normal>৪</Normal>")
+            sb.AppendLine("      <Shift>৳</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""53"">")
+            sb.AppendLine("      <Normal>৫</Normal>")
+            sb.AppendLine("      <Shift>%</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""54"">")
+            sb.AppendLine("      <Normal>৬</Normal>")
+            sb.AppendLine("      <Shift>^</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""55"">")
+            sb.AppendLine("      <Normal>৭</Normal>")
+            sb.AppendLine("      <Shift>&amp;</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""56"">")
+            sb.AppendLine("      <Normal>৮</Normal>")
+            sb.AppendLine("      <Shift>*</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""57"">")
+            sb.AppendLine("      <Normal>৯</Normal>")
+            sb.AppendLine("      <Shift>(</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""65"">")
+            sb.AppendLine("      <Normal>া</Normal>")
+            sb.AppendLine("      <Shift>আ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""66"">")
+            sb.AppendLine("      <Normal>ব</Normal>")
+            sb.AppendLine("      <Shift>ভ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""67"">")
+            sb.AppendLine("      <Normal>চ</Normal>")
+            sb.AppendLine("      <Shift>ছ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""68"">")
+            sb.AppendLine("      <Normal>দ</Normal>")
+            sb.AppendLine("      <Shift>ধ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""69"">")
+            sb.AppendLine("      <Normal>ে</Normal>")
+            sb.AppendLine("      <Shift>ৈ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""70"" N_O=""Joiner"">")
+            sb.AppendLine("      <Normal>্</Normal>")
+            sb.AppendLine("      <Shift>অ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""71"">")
+            sb.AppendLine("      <Normal>গ</Normal>")
+            sb.AppendLine("      <Shift>ঘ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""72"">")
+            sb.AppendLine("      <Normal>হ</Normal>")
+            sb.AppendLine("      <Shift>ঃ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""73"">")
+            sb.AppendLine("      <Normal>ি</Normal>")
+            sb.AppendLine("      <Shift>ী</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""74"">")
+            sb.AppendLine("      <Normal>জ</Normal>")
+            sb.AppendLine("      <Shift>ঝ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""75"">")
+            sb.AppendLine("      <Normal>ক</Normal>")
+            sb.AppendLine("      <Shift>খ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""76"">")
+            sb.AppendLine("      <Normal>ল</Normal>")
+            sb.AppendLine("      <Shift>্ল</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""77"">")
+            sb.AppendLine("      <Normal>ম</Normal>")
+            sb.AppendLine("      <Shift>ক্ষ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""78"">")
+            sb.AppendLine("      <Normal>ন</Normal>")
+            sb.AppendLine("      <Shift>ণ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""79"">")
+            sb.AppendLine("      <Normal>ো</Normal>")
+            sb.AppendLine("      <Shift>ৌ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""80"">")
+            sb.AppendLine("      <Normal>প</Normal>")
+            sb.AppendLine("      <Shift>ফ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""81"">")
+            sb.AppendLine("      <Normal>ই</Normal>")
+            sb.AppendLine("      <Shift>ঈ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""82"">")
+            sb.AppendLine("      <Normal>র</Normal>")
+            sb.AppendLine("      <Shift>ৃ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""83"">")
+            sb.AppendLine("      <Normal>স</Normal>")
+            sb.AppendLine("      <Shift>শ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""84"">")
+            sb.AppendLine("      <Normal>ত</Normal>")
+            sb.AppendLine("      <Shift>থ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""85"">")
+            sb.AppendLine("      <Normal>ু</Normal>")
+            sb.AppendLine("      <Shift>ূ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""86"">")
+            sb.AppendLine("      <Normal>ট</Normal>")
+            sb.AppendLine("      <Shift>ঠ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""87"">")
+            sb.AppendLine("      <Normal>উ</Normal>")
+            sb.AppendLine("      <Shift>ঊ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""88"">")
+            sb.AppendLine("      <Normal>ড</Normal>")
+            sb.AppendLine("      <Shift>ঢ</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""89"">")
+            sb.AppendLine("      <Normal>য়</Normal>")
+            sb.AppendLine("      <Shift>য</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""90"">")
+            sb.AppendLine("      <Normal>ঙ</Normal>")
+            sb.AppendLine("      <Shift>ং</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""186"">")
+            sb.AppendLine("      <Normal>;</Normal>")
+            sb.AppendLine("      <Shift>:</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""187"">")
+            sb.AppendLine("      <Normal>=</Normal>")
+            sb.AppendLine("      <Shift>+</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""188"">")
+            sb.AppendLine("      <Normal>,</Normal>")
+            sb.AppendLine("      <Shift>&lt;</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""189"">")
+            sb.AppendLine("      <Normal>-</Normal>")
+            sb.AppendLine("      <Shift>_</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""190"">")
+            sb.AppendLine("      <Normal>।</Normal>")
+            sb.AppendLine("      <Shift>&gt;</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""191"">")
+            sb.AppendLine("      <Normal>/</Normal>")
+            sb.AppendLine("      <Shift>?</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""192"">")
+            sb.AppendLine("      <Normal>ঁ</Normal>")
+            sb.AppendLine("      <Shift>`</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""219"">")
+            sb.AppendLine("      <Normal>[</Normal>")
+            sb.AppendLine("      <Shift>{</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""220"">")
+            sb.AppendLine("      <Normal>\</Normal>")
+            sb.AppendLine("      <Shift>|</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""221"">")
+            sb.AppendLine("      <Normal>]</Normal>")
+            sb.AppendLine("      <Shift>}</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("    <Key vkCode=""222"">")
+            sb.AppendLine("      <Normal>'</Normal>")
+            sb.AppendLine("      <Shift>&quot;</Shift>")
+            sb.AppendLine("    </Key>")
+            sb.AppendLine("  </Keys>")
+            sb.AppendLine("  <Combinations>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input> " & ChrW(8217) & "</Input>")
+            sb.AppendLine("      <Output> " & ChrW(8216) & "</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input> " & ChrW(8221) & "</Input>")
+            sb.AppendLine("      <Output> " & ChrW(8220) & "</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input> ু</Input>")
+            sb.AppendLine("      <Output> ‍ু</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input> ূ</Input>")
+            sb.AppendLine("      <Output> ‍ূ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input> ৃ</Input>")
+            sb.AppendLine("      <Output> ‍ৃ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>ঁা</Input>")
+            sb.AppendLine("      <Output>াঁ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>ঁু</Input>")
+            sb.AppendLine("      <Output>ুঁ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>ঁূ</Input>")
+            sb.AppendLine("      <Output>ূঁ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>ঁৃ</Input>")
+            sb.AppendLine("      <Output>ৃঁ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>র‌ে্য</Input>")
+            sb.AppendLine("      <Output>র‌্যে</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>র‌ৈ্য</Input>")
+            sb.AppendLine("      <Output>র‌্যৈ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>র‌্য</Input>")
+            sb.AppendLine("      <Output>র‌্য</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>ু্য</Input>")
+            sb.AppendLine("      <Output>্যু</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>ু্র</Input>")
+            sb.AppendLine("      <Output>্রু</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>ূ্য</Input>")
+            sb.AppendLine("      <Output>্যূ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>ূ্র</Input>")
+            sb.AppendLine("      <Output>্রূ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>ৃ্য</Input>")
+            sb.AppendLine("      <Output>্যৃ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>ৃ্র</Input>")
+            sb.AppendLine("      <Output>্রৃ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>েঁা</Input>")
+            sb.AppendLine("      <Output>োঁ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>েঁৗ</Input>")
+            sb.AppendLine("      <Output>ৌঁ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>ো</Input>")
+            sb.AppendLine("      <Output>ো</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>েো</Input>")
+            sb.AppendLine("      <Output> ো</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>েৌ</Input>")
+            sb.AppendLine("      <Output>ৌ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>ৌ</Input>")
+            sb.AppendLine("      <Output>ৌ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>অা</Input>")
+            sb.AppendLine("      <Output>আ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্া</Input>")
+            sb.AppendLine("      <Output>আ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ি</Input>")
+            sb.AppendLine("      <Output>ই</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ী</Input>")
+            sb.AppendLine("      <Output>ঈ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ু</Input>")
+            sb.AppendLine("      <Output>উ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ূ</Input>")
+            sb.AppendLine("      <Output>ঊ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ৃ</Input>")
+            sb.AppendLine("      <Output>ঋ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ে</Input>")
+            sb.AppendLine("      <Output>এ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ৈ</Input>")
+            sb.AppendLine("      <Output>ঐ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্্</Input>")
+            sb.AppendLine("      <Output>্‌</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("    <Combination>")
+            sb.AppendLine("      <Input>্ৗ</Input>")
+            sb.AppendLine("      <Output>ঔ</Output>")
+            sb.AppendLine("    </Combination>")
+            sb.AppendLine("  </Combinations>")
+            sb.AppendLine("</Layout>")
+            File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8)
+        End If
+    End Sub
     Private Sub MainUI_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Try
             ' Parse command line arguments for Safe Mode
@@ -124,6 +902,8 @@ Public Class MainUI
             writeBanglaTypeLayout("BanglaType")
             writeBanglaTypeEncodingLayout("BanglaType Encoding")
             writeNationalLayout("National")
+            writeBanglaUniversalLayout("Bangla Universal")
+            writeProbhatLayout("Probhat")
 
             ' Robust DLL load with Try...Catch to handle platform mismatch or missing dependencies on 64-bit Systems.
             Try
@@ -168,7 +948,7 @@ Public Class MainUI
             End Try
 
             'Topbar UI
-            Width = 190
+            Width = 218
             Height = 32
             Top = 0
             Left = (Screen.PrimaryScreen.Bounds.Width / 2) - (Width / 2) 'Center Topbar
@@ -194,12 +974,9 @@ Public Class MainUI
             UpdateModeUI()
             ApplyRoundedCorners()
 
-            ' Safe Mode Notification and Automatic Updater Run
+            ' Safe Mode Notification
             If IsSafeMode Then
                 MessageBox.Show("BanglaType has been started in Safe Mode. Suggestions and Clipboard Manager are disabled for stability.", "Safe Mode Active", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            Else
-                ' Check for updates in background
-                CheckForUpdates(silent:=True)
             End If
         Catch ex As Exception
             MessageBox.Show("An error occurred during BanglaType initialization: " & ex.Message & vbCrLf & ex.StackTrace, "BanglaType Initialization Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -257,6 +1034,12 @@ Public Class MainUI
     Private Sub RestoreLastLayout()
         If AppSettings.LastLayoutTag < 0 Then Return
         crlay = AppSettings.LastLayoutTag
+        
+        ' Fallback to Avro if DLL is missing and phonetic is selected
+        If crlay = 9999 AndAlso Not isPhonetic Then
+            crlay = AVRO_TAG
+        End If
+
         isPhoneticSelected = (crlay = 9999)
         isAvroSelected = (crlay = AVRO_TAG)
         If isPhoneticSelected OrElse isAvroSelected Then
@@ -380,6 +1163,14 @@ Public Class MainUI
         AddHandler miSugg.Click, Sub() ToggleSuggestions()
         trayMenu.Items.Add(miSugg)
 
+        Dim miSmartPredictionTray As New ToolStripMenuItem("Smart Word Prediction Settings...")
+        AddHandler miSmartPredictionTray.Click, Sub()
+                                                    Using dlg As New SmartPredictionWindow()
+                                                        dlg.ShowDialog()
+                                                    End Using
+                                                End Sub
+        trayMenu.Items.Add(miSmartPredictionTray)
+
         Dim miClipboardTray As New ToolStripMenuItem("Clipboard Manager") With {.Name = "clip"}
         trayMenu.Items.Add(miClipboardTray)
 
@@ -407,6 +1198,13 @@ Public Class MainUI
                                           End Using
                                       End Sub
         trayMenu.Items.Add(miConverter)
+
+        Dim miNotepadTray As New ToolStripMenuItem("BanglaType Notepad...")
+        AddHandler miNotepadTray.Click, Sub()
+                                            Dim dlg As New NotepadWindow()
+                                            dlg.Show()
+                                        End Sub
+        trayMenu.Items.Add(miNotepadTray)
 
         Dim miAnalyticsTray As New ToolStripMenuItem("Typing Analytics Dashboard...")
         AddHandler miAnalyticsTray.Click, Sub()
@@ -545,9 +1343,12 @@ Public Class MainUI
 
         ' Update active layout if toggled on
         If isActivated Then
+            If crlay = 9999 AndAlso Not isPhonetic Then
+                crlay = AVRO_TAG
+            End If
             If crlay = 9999 OrElse crlay = 9998 Then
                 isPhoneticSelected = (crlay = 9999)
-                isAvroSelected = (crlay = 9998)
+                isAvroSelected = (crlay = AVRO_TAG)
             Else
                 isPhoneticSelected = False
                 isAvroSelected = False
@@ -626,8 +1427,11 @@ Public Class MainUI
         If currentMode = "English" Then
             isActivated = True
             crlay = LastPhoneticTag
+            If crlay = 9999 AndAlso Not isPhonetic Then
+                crlay = AVRO_TAG
+            End If
             isPhoneticSelected = (crlay = 9999)
-            isAvroSelected = (crlay = 9998)
+            isAvroSelected = (crlay = AVRO_TAG)
         ElseIf currentMode = "Banglish" Then
             isActivated = True
             crlay = LastFixedTag
@@ -671,15 +1475,13 @@ Public Class MainUI
         Next
         settingsMenu.Items.Add(miThemes)
 
-        Dim miSugg As New ToolStripMenuItem("Suggestion Bar")
-        Dim miSuggEnable As New ToolStripMenuItem("Enabled")
-        AddHandler miSuggEnable.Click, Sub()
-                                           AppSettings.SuggestionsEnabled = Not AppSettings.SuggestionsEnabled
-                                           AppSettings.Save()
-                                           If Not AppSettings.SuggestionsEnabled Then HideSuggest()
-                                       End Sub
-        miSugg.DropDownItems.Add(miSuggEnable)
-        settingsMenu.Items.Add(miSugg)
+        Dim miSmartPrediction As New ToolStripMenuItem("Smart Word Prediction Settings...")
+        AddHandler miSmartPrediction.Click, Sub()
+                                                Using dlg As New SmartPredictionWindow()
+                                                    dlg.ShowDialog()
+                                                End Using
+                                            End Sub
+        settingsMenu.Items.Add(miSmartPrediction)
 
         Dim miHotkey As New ToolStripMenuItem("Shortcut Key")
         Dim keysList As String() = {"F12", "F10", "F9", "F8", "Ctrl + Space"}
@@ -708,6 +1510,13 @@ Public Class MainUI
                                           End Using
                                       End Sub
         settingsMenu.Items.Add(miConverter)
+
+        Dim miNotepad As New ToolStripMenuItem("BanglaType Notepad...")
+        AddHandler miNotepad.Click, Sub()
+                                        Dim dlg As New NotepadWindow()
+                                        dlg.Show()
+                                    End Sub
+        settingsMenu.Items.Add(miNotepad)
 
         Dim miAnalytics As New ToolStripMenuItem("Typing Analytics Dashboard...")
         AddHandler miAnalytics.Click, Sub()
@@ -749,9 +1558,7 @@ Public Class MainUI
                                         End Sub
         settingsMenu.Items.Add(miAIAssistant)
 
-        Dim miUpdate As New ToolStripMenuItem("Check for Updates...")
-        AddHandler miUpdate.Click, Sub() CheckForUpdates(silent:=False)
-        settingsMenu.Items.Add(miUpdate)
+
 
         Dim miVoice As New ToolStripMenuItem("Voice Typing (Speech-to-Text)...")
         AddHandler miVoice.Click, Sub() TriggerVoiceTyping()
@@ -783,7 +1590,6 @@ Public Class MainUI
         settingsMenu.Items.Add(miPhrases)
 
         AddHandler settingsMenu.Opening, Sub(sender As Object, e As System.ComponentModel.CancelEventArgs)
-                                             miSuggEnable.Checked = AppSettings.SuggestionsEnabled
                                              miStartWithWindows.Checked = IsAutoStartEnabled()
                                              For Each item As ToolStripItem In miHotkey.DropDownItems
                                                  Dim cMi As ToolStripMenuItem = TryCast(item, ToolStripMenuItem)
@@ -1260,73 +2066,10 @@ Public Class MainUI
         TriggerVoiceTyping()
     End Sub
 
-    Public Shared Sub CheckForUpdates(ByVal silent As Boolean)
-        Dim t As New System.Threading.Thread(Sub()
-            Try
-                Dim updateUrl As String = "https://raw.githubusercontent.com/shahinur/BanglaType-lite/main/update.json"
-                Dim request As System.Net.HttpWebRequest = CType(System.Net.WebRequest.Create(updateUrl), System.Net.HttpWebRequest)
-                request.Method = "GET"
-                request.Timeout = 5000
-                Using response As System.Net.WebResponse = request.GetResponse()
-                    Using stream As System.IO.Stream = response.GetResponseStream()
-                        Using reader As New System.IO.StreamReader(stream, Encoding.UTF8)
-                            Dim json As String = reader.ReadToEnd()
-                            Dim versionStr As String = ""
-                            Dim downloadUrl As String = ""
-                            
-                            Dim vMatch = System.Text.RegularExpressions.Regex.Match(json, """version""\s*:\s*""([^""]+)""")
-                            If vMatch.Success Then versionStr = vMatch.Groups(1).Value
-                            
-                            Dim uMatch = System.Text.RegularExpressions.Regex.Match(json, """url""\s*:\s*""([^""]+)""")
-                            If uMatch.Success Then downloadUrl = uMatch.Groups(1).Value
-                            
-                            If Not String.IsNullOrEmpty(versionStr) AndAlso Not String.IsNullOrEmpty(downloadUrl) Then
-                                Dim currentVer As New Version(Application.ProductVersion)
-                                Dim remoteVer As New Version(versionStr)
-                                
-                                If remoteVer > currentVer Then
-                                    Dim main As Form = Application.OpenForms.Cast(Of Form)().FirstOrDefault(Function(f) TypeOf f Is MainUI)
-                                    If main IsNot Nothing Then
-                                        main.BeginInvoke(Sub()
-                                            Dim res As DialogResult = MessageBox.Show(main, 
-                                                "A new version of BanglaType (v" & versionStr & ") is available." & vbCrLf & _
-                                                "Would you like to download and install it now?", 
-                                                "Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Information)
-                                            If res = DialogResult.Yes Then
-                                                Try
-                                                    System.Diagnostics.Process.Start(downloadUrl)
-                                                Catch ex As Exception
-                                                    MessageBox.Show("Failed to open update link: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                                                End Try
-                                            End If
-                                        End Sub)
-                                    End If
-                                Else
-                                    If Not silent Then
-                                        Dim main As Form = Application.OpenForms.Cast(Of Form)().FirstOrDefault(Function(f) TypeOf f Is MainUI)
-                                        If main IsNot Nothing Then
-                                            main.BeginInvoke(Sub()
-                                                MessageBox.Show(main, "You are using the latest version of BanglaType (v" & Application.ProductVersion & ").", "Up to Date", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                                            End Sub)
-                                        End If
-                                    End If
-                                End If
-                            End If
-                        End Using
-                    End Using
-                End Using
-            Catch ex As Exception
-                If Not silent Then
-                    Dim main As Form = Application.OpenForms.Cast(Of Form)().FirstOrDefault(Function(f) TypeOf f Is MainUI)
-                    If main IsNot Nothing Then
-                        main.BeginInvoke(Sub()
-                            MessageBox.Show(main, "Failed to check for updates: " & ex.Message, "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                        End Sub)
-                    End If
-                End If
-            End Try
-        End Sub)
-        t.IsBackground = True
-        t.Start()
+    Private Sub btnNotepad_Click(sender As Object, e As EventArgs) Handles btnNotepad.Click
+        Dim dlg As New NotepadWindow()
+        dlg.Show()
     End Sub
+
+
 End Class

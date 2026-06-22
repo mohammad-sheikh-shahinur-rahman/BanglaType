@@ -19,6 +19,8 @@ Public Module SuggestionEngine
     Private freq As New Dictionary(Of String, Integer)(StringComparer.Ordinal)
     Private bigrams As New Dictionary(Of String, Dictionary(Of String, Integer))(StringComparer.OrdinalIgnoreCase)
     Private customMappings As New Dictionary(Of String, String)(StringComparer.OrdinalIgnoreCase)
+    Private autoCorrect As New Dictionary(Of String, String)(StringComparer.Ordinal)
+    Private englishWords As New HashSet(Of String)(StringComparer.OrdinalIgnoreCase)
     Private onlineCache As New Dictionary(Of String, List(Of String))(StringComparer.OrdinalIgnoreCase)
     Private fetchingPrefix As String = ""
     Private loaded As Boolean = False
@@ -103,10 +105,103 @@ Public Module SuggestionEngine
             If File.Exists(UserPath()) Then ReadFile(UserPath())
             If File.Exists(BigramPath()) Then ReadBigrams(BigramPath())
             LoadCustomMappings()
+            LoadAutoCorrect()
+            LoadEnglishWords()
+            LoadJsonDataFiles()
         Catch
             ' Suggestions are best-effort; ignore IO errors.
         End Try
     End Sub
+
+    Private Sub LoadJsonDataFiles()
+        Dim dataFolder As String = ""
+        Try
+            Dim prodPath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data"))
+            If Directory.Exists(prodPath) Then
+                dataFolder = prodPath
+            Else
+                Dim devPath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "data"))
+                If Directory.Exists(devPath) Then
+                    dataFolder = devPath
+                End If
+            End If
+        Catch
+        End Try
+
+        If String.IsNullOrEmpty(dataFolder) Then Return
+
+        ' 1. Load dictionary.json (Words list)
+        Dim dictPath = Path.Combine(dataFolder, "dictionary.json")
+        If File.Exists(dictPath) Then
+            Try
+                Dim content = File.ReadAllText(dictPath, Encoding.UTF8)
+                ' Matches all Bengali words inside double quotes, e.g. "দংগল"
+                Dim matches = System.Text.RegularExpressions.Regex.Matches(content, """([\u0980-\u09FF]+)""")
+                For Each m As System.Text.RegularExpressions.Match In matches
+                    Dim w As String = m.Groups(1).Value
+                    If w.Length >= 2 Then
+                        If Not freq.ContainsKey(w) Then
+                            freq(w) = 1
+                        End If
+                    End If
+                Next
+            Catch
+            End Try
+        End If
+
+        ' 2. Load autocorrect.json (custom phonetic suggestions/corrections)
+        Dim autoPath = Path.Combine(dataFolder, "autocorrect.json")
+        If File.Exists(autoPath) Then
+            Try
+                Dim content = File.ReadAllText(autoPath, Encoding.UTF8)
+                ' Match "wrong": "right"
+                Dim matches = System.Text.RegularExpressions.Regex.Matches(content, """([^""]+)""\s*:\s*""([^""]+)""")
+                For Each m As System.Text.RegularExpressions.Match In matches
+                    Dim wrong As String = m.Groups(1).Value.Trim().ToLower()
+                    Dim right As String = m.Groups(2).Value.Trim()
+                    If wrong.Length > 0 AndAlso right.Length > 0 AndAlso Not wrong.Equals(right) Then
+                        ' Load into autocorrect if it maps to correct Bangla
+                        ' If right contains Bengali letters, it is custom mapping
+                        ' If right is English, it is raw autocorrect input replacement
+                        If IsBengaliString(right) Then
+                            customMappings(wrong) = right
+                        Else
+                            autoCorrect(wrong) = right
+                        End If
+                    End If
+                Next
+            Catch
+            End Try
+        End If
+
+        ' 3. Load suffix.json (custom suffixes)
+        Dim suffixPath = Path.Combine(dataFolder, "suffix.json")
+        If File.Exists(suffixPath) Then
+            Try
+                Dim content = File.ReadAllText(suffixPath, Encoding.UTF8)
+                ' Match "suffix_roman": "suffix_bangla"
+                Dim matches = System.Text.RegularExpressions.Regex.Matches(content, """([^""]+)""\s*:\s*""([^""]+)""")
+                For Each m As System.Text.RegularExpressions.Match In matches
+                    Dim wrong As String = m.Groups(1).Value.Trim().ToLower()
+                    Dim right As String = m.Groups(2).Value.Trim()
+                    If wrong.Length > 0 AndAlso right.Length > 0 Then
+                        customMappings(wrong) = right
+                    End If
+                Next
+            Catch
+            End Try
+        End If
+    End Sub
+
+    Private Function IsBengaliString(ByVal s As String) As Boolean
+        For Each c As Char In s
+            Dim code As Integer = Convert.ToInt32(c)
+            If code >= &H980 AndAlso code <= &H9FF Then
+                Return True
+            End If
+        Next
+        Return False
+    End Function
 
     Private Sub ReadFile(ByVal path As String)
         For Each line As String In File.ReadAllLines(path, Encoding.UTF8)
@@ -451,6 +546,122 @@ Public Module SuggestionEngine
         End Try
     End Sub
 
+    ' --- Auto-correction (common Bangla spelling mistakes) ---
+
+    Private Function AutoCorrectPath() As String
+        Return Path.Combine(DictFolder(), "autocorrect.txt")
+    End Function
+
+    ''' <summary>Loads the wrong->right correction table, seeding a starter file on first run.</summary>
+    Private Sub LoadAutoCorrect()
+        Try
+            autoCorrect.Clear()
+            Dim path As String = AutoCorrectPath()
+            If Not File.Exists(path) Then
+                File.WriteAllText(path, SeedAutoCorrect(), New UTF8Encoding(False))
+            End If
+            For Each line As String In File.ReadAllLines(path, Encoding.UTF8)
+                If String.IsNullOrWhiteSpace(line) OrElse line.StartsWith("#") Then Continue For
+                Dim parts() As String = line.Split(ControlChars.Tab)
+                If parts.Length >= 2 Then
+                    Dim wrong As String = parts(0).Trim()
+                    Dim right As String = parts(1).Trim()
+                    If wrong.Length > 0 AndAlso right.Length > 0 AndAlso Not wrong.Equals(right) Then
+                        autoCorrect(wrong) = right
+                    End If
+                End If
+            Next
+        Catch
+        End Try
+    End Sub
+
+    ''' <summary>Returns the corrected spelling for a Bangla word, or "" when no correction applies.</summary>
+    Public Function GetAutoCorrection(ByVal word As String) As String
+        If String.IsNullOrEmpty(word) Then Return ""
+        EnsureLoaded()
+        Dim fixedWord As String = Nothing
+        If autoCorrect.TryGetValue(word, fixedWord) Then Return fixedWord
+        Return ""
+    End Function
+
+    Private Function SeedAutoCorrect() As String
+        ' Tab-separated wrong<TAB>right pairs. Users may add their own lines.
+        Dim pairs() As String = {
+            "আমী" & vbTab & "আমি",
+            "তুমী" & vbTab & "তুমি",
+            "করছী" & vbTab & "করছি",
+            "করব়" & vbTab & "করব",
+            "ভালবাসা" & vbTab & "ভালোবাসা",
+            "ভালোবাশা" & vbTab & "ভালোবাসা",
+            "দুঃখীত" & vbTab & "দুঃখিত",
+            "ধন্যবাধ" & vbTab & "ধন্যবাদ",
+            "ধন্যবা" & vbTab & "ধন্যবাদ",
+            "অভিনন্ধন" & vbTab & "অভিনন্দন",
+            "বাংলাদেস" & vbTab & "বাংলাদেশ",
+            "বাংলাদেষ" & vbTab & "বাংলাদেশ",
+            "স্বাগতম়" & vbTab & "স্বাগতম",
+            "ইনশাআল্লাহ" & vbTab & "ইনশাআল্লাহ",
+            "আসসালামুআলাইকুম" & vbTab & "আসসালামু আলাইকুম"
+        }
+        Dim sb As New StringBuilder()
+        sb.Append("# BanglaType auto-correction list  (wrong<TAB>right). Add your own lines below.").Append(vbLf)
+        For Each p As String In pairs
+            sb.Append(p).Append(vbLf)
+        Next
+        Return sb.ToString()
+    End Function
+
+    ' --- Mixed typing (keep recognised English words in English) ---
+
+    Private Function EnglishWordsPath() As String
+        Return Path.Combine(DictFolder(), "english_words.txt")
+    End Function
+
+    Private Sub LoadEnglishWords()
+        Try
+            englishWords.Clear()
+            Dim path As String = EnglishWordsPath()
+            If Not File.Exists(path) Then
+                File.WriteAllText(path, SeedEnglishWords(), New UTF8Encoding(False))
+            End If
+            For Each line As String In File.ReadAllLines(path, Encoding.UTF8)
+                Dim w As String = line.Trim()
+                If w.Length >= 2 AndAlso Not w.StartsWith("#") Then englishWords.Add(w)
+            Next
+        Catch
+        End Try
+    End Sub
+
+    ''' <summary>True when the romanized buffer is a recognised English word that should be left untransliterated.</summary>
+    Public Function IsEnglishWord(ByVal roman As String) As Boolean
+        If String.IsNullOrEmpty(roman) Then Return False
+        If roman.Length < 3 Then Return False
+        If Not IsRoman(roman) Then Return False
+        EnsureLoaded()
+        Return englishWords.Contains(roman)
+    End Function
+
+    Private Function SeedEnglishWords() As String
+        Dim words() As String = {
+            "school", "college", "university", "office", "computer", "laptop", "mobile", "phone",
+            "internet", "online", "offline", "email", "software", "hardware", "website", "browser",
+            "facebook", "google", "youtube", "twitter", "instagram", "whatsapp", "messenger",
+            "video", "photo", "camera", "screen", "keyboard", "mouse", "printer", "scanner",
+            "doctor", "engineer", "teacher", "student", "class", "exam", "result", "project",
+            "meeting", "market", "bank", "hospital", "restaurant", "hotel", "ticket", "train",
+            "manager", "password", "login", "logout", "account", "message", "group", "link",
+            "page", "post", "share", "comment", "profile", "status", "update", "download",
+            "upload", "network", "server", "data", "file", "folder", "download", "windows",
+            "android", "iphone", "version", "update", "battery", "charger", "wifi", "router"
+        }
+        Dim sb As New StringBuilder()
+        sb.Append("# BanglaType mixed-typing English word list. One word per line; add your own.").Append(vbLf)
+        For Each w As String In words
+            sb.Append(w).Append(vbLf)
+        Next
+        Return sb.ToString()
+    End Function
+
     ' --- Online Google / Gemini AI Suggestion Fetcher ---
 
     Private Function ParseGoogleSuggestions(ByVal input As String, ByVal json As String) As List(Of String)
@@ -596,4 +807,18 @@ Public Module SuggestionEngine
         End Try
         Return ""
     End Function
+
+    Public Function GetLoadedWordCount() As Integer
+        EnsureLoaded()
+        Return freq.Count
+    End Function
+
+    Public Sub OpenAutoCorrectInNotepad()
+        EnsureLoaded()
+        Try
+            System.Diagnostics.Process.Start("notepad.exe", AutoCorrectPath())
+        Catch ex As Exception
+            MessageBox.Show("Could not open auto-correct file: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+    End Sub
 End Module

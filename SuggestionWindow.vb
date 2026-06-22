@@ -1,51 +1,61 @@
-﻿'
+'
 '
 '   This program Is free software; you can redistribute it And/Or modify
 '   it under the terms Of the GNU General Public License As published by
 '   the Free Software Foundation; either version 3 Of the License, Or
 '   (at your option) any later version.
 '
-'   BanglaType Lite "Advance" additions: floating candidate (suggestion) window.
+'   BanglaType Lite "Advance" additions: floating candidate / suggestion popup.
 '
 
 Imports System.Drawing
-Imports System.Drawing.Drawing2D
+Imports System.Windows.Forms
 
 ''' <summary>
-''' A borderless, top-most, non-activating popup that lists word candidates near
-''' the caret. It never takes focus from the user's application (WS_EX_NOACTIVATE),
-''' so typing continues uninterrupted while suggestions are shown.
+''' A borderless, non-activating popup that lists word candidates near the caret.
+''' Selection is driven entirely from the global keyboard hook (Up/Down/Tab/1-9),
+''' so the window must never steal focus from the app the user is typing into.
 ''' </summary>
 Public Class SuggestionWindow
     Inherits Form
 
-    Private items As New List(Of String)()
-    Private selected As Integer = 0
+    Private ReadOnly _list As New ListBox()
+    Private _items As New List(Of String)()
+    Private _selected As Integer = 0
 
-    Private rowHeight As Integer = 24
-    Private padX As Integer = 10
-    Private ReadOnly itemFont As Font = New Font("Nirmala UI", 11.0!, FontStyle.Regular)
-    Private ReadOnly numFont As Font = New Font("Segoe UI", 8.0!, FontStyle.Regular)
+    ' Theme colours (defaults match the Dark suggestion scheme).
+    Private _back As Color = Color.FromArgb(28, 28, 30)
+    Private _fore As Color = Color.White
+    Private _selBack As Color = Color.FromArgb(0, 180, 137)
+    Private _selFore As Color = Color.White
 
-    ' Theme colors (overridden by ThemeManager)
-    Public BackTheme As Color = Color.FromArgb(250, 250, 250)
-    Public ForeTheme As Color = Color.FromArgb(20, 20, 20)
-    Public SelBackTheme As Color = Color.FromArgb(201, 222, 245)
-    Public SelForeTheme As Color = Color.FromArgb(10, 10, 10)
-    Public BorderTheme As Color = Color.FromArgb(210, 210, 210)
-    Public NumTheme As Color = Color.FromArgb(140, 140, 140)
+    Private Const RowHeight As Integer = 24
+    Private Const MaxVisibleRows As Integer = 9
 
     Public Sub New()
         Me.FormBorderStyle = FormBorderStyle.None
         Me.ShowInTaskbar = False
         Me.TopMost = True
         Me.StartPosition = FormStartPosition.Manual
+        Me.MinimumSize = New Size(60, RowHeight)
         Me.DoubleBuffered = True
-        Me.SetStyle(ControlStyles.OptimizedDoubleBuffer Or ControlStyles.AllPaintingInWmPaint Or ControlStyles.UserPaint, True)
-        Me.Visible = False
+        Me.BackColor = _back
+        Me.Padding = New Padding(1)
+
+        _list.Dock = DockStyle.Fill
+        _list.BorderStyle = BorderStyle.None
+        _list.DrawMode = DrawMode.OwnerDrawFixed
+        _list.ItemHeight = RowHeight
+        _list.IntegralHeight = False
+        _list.Font = New Font("Nirmala UI", 11.0!, FontStyle.Regular)
+        _list.BackColor = _back
+        _list.ForeColor = _fore
+        AddHandler _list.DrawItem, AddressOf List_DrawItem
+        AddHandler _list.MouseClick, AddressOf List_MouseClick
+        Me.Controls.Add(_list)
     End Sub
 
-    ' Show without stealing focus from the foreground app.
+    ''' <summary>Do not activate (take focus) when shown.</summary>
     Protected Overrides ReadOnly Property ShowWithoutActivation() As Boolean
         Get
             Return True
@@ -54,147 +64,131 @@ Public Class SuggestionWindow
 
     Protected Overrides ReadOnly Property CreateParams() As CreateParams
         Get
-            Const WS_EX_TOPMOST As Integer = &H8
-            Const WS_EX_TOOLWINDOW As Integer = &H80
             Const WS_EX_NOACTIVATE As Integer = &H8000000
-            Const CS_DROPSHADOW As Integer = &H20000
+            Const WS_EX_TOOLWINDOW As Integer = &H80
             Dim cp As CreateParams = MyBase.CreateParams
-            cp.ExStyle = cp.ExStyle Or WS_EX_TOPMOST Or WS_EX_TOOLWINDOW Or WS_EX_NOACTIVATE
-            cp.ClassStyle = cp.ClassStyle Or CS_DROPSHADOW
+            cp.ExStyle = cp.ExStyle Or WS_EX_NOACTIVATE Or WS_EX_TOOLWINDOW
             Return cp
         End Get
     End Property
 
+    ' --- public API consumed by Keyboard.vb -------------------------------
+
     Public ReadOnly Property Count() As Integer
         Get
-            Return items.Count
+            Return _items.Count
         End Get
     End Property
 
     Public ReadOnly Property SelectedIndex() As Integer
         Get
-            Return selected
+            Return _selected
         End Get
     End Property
 
-    ''' <summary>Returns the candidate at the given index (1-based pick from a number key), or "".</summary>
     Public Function ItemAt(ByVal index As Integer) As String
-        If index >= 0 AndAlso index < items.Count Then Return items(index)
-        Return ""
+        If index < 0 OrElse index >= _items.Count Then Return ""
+        Return _items(index)
     End Function
 
-    Public Function SelectedItem() As String
-        Return ItemAt(selected)
-    End Function
-
-    Public Sub MoveSelection(ByVal delta As Integer)
-        If items.Count = 0 Then Return
-        selected = ((selected + delta) Mod items.Count + items.Count) Mod items.Count
-        Invalidate()
-    End Sub
-
-    ''' <summary>Updates the list and repositions near <paramref name="anchorScreenPos"/> (the caret).</summary>
-    Public Sub ShowCandidates(ByVal list As List(Of String), ByVal anchorScreenPos As Point)
-        items = If(list, New List(Of String)())
-        selected = 0
-        If items.Count = 0 Then
+    ''' <summary>Shows the candidate list anchored just below the given screen point.</summary>
+    Public Sub ShowCandidates(ByVal candidates As List(Of String), ByVal anchor As Point)
+        If candidates Is Nothing OrElse candidates.Count = 0 Then
             HideWindow()
             Return
         End If
 
+        _items = New List(Of String)(candidates)
+        _selected = 0
+
+        _list.BeginUpdate()
+        _list.Items.Clear()
+        Dim idx As Integer = 1
+        For Each w As String In _items
+            _list.Items.Add(If(idx <= 9, idx & "  " & w, "    " & w))
+            idx += 1
+        Next
+        _list.EndUpdate()
+
         ' Size to content.
-        Dim maxW As Integer = 60
-        Using g As Graphics = Me.CreateGraphics()
-            For i As Integer = 0 To items.Count - 1
-                Dim line As String = (i + 1).ToString() & ".  " & items(i)
-                Dim sz As SizeF = g.MeasureString(line, itemFont)
-                maxW = Math.Max(maxW, CInt(Math.Ceiling(sz.Width)) + padX * 2)
+        Dim rows As Integer = Math.Min(_items.Count, MaxVisibleRows)
+        Dim widest As Integer = 80
+        Using g As Graphics = _list.CreateGraphics()
+            For Each it As Object In _list.Items
+                Dim w As Integer = CInt(g.MeasureString(it.ToString(), _list.Font).Width) + 24
+                If w > widest Then widest = w
             Next
         End Using
-        Dim h As Integer = rowHeight * items.Count + 4
+        Me.Size = New Size(Math.Min(widest, 360), rows * RowHeight + 2)
 
-        ' Keep on screen: prefer below the caret, flip above if needed.
-        Dim wa As Rectangle = Screen.FromPoint(anchorScreenPos).WorkingArea
-        Dim x As Integer = anchorScreenPos.X
-        Dim y As Integer = anchorScreenPos.Y + 20
-        If x + maxW > wa.Right Then x = wa.Right - maxW
-        If x < wa.Left Then x = wa.Left
-        If y + h > wa.Bottom Then y = anchorScreenPos.Y - h - 2
-        If y < wa.Top Then y = wa.Top
+        ' Keep it on screen.
+        Dim scrArea As Rectangle = System.Windows.Forms.Screen.FromPoint(anchor).WorkingArea
+        Dim x As Integer = anchor.X
+        Dim y As Integer = anchor.Y + 20
+        If x + Me.Width > scrArea.Right Then x = scrArea.Right - Me.Width
+        If x < scrArea.Left Then x = scrArea.Left
+        If y + Me.Height > scrArea.Bottom Then y = anchor.Y - Me.Height - 2
+        If y < scrArea.Top Then y = scrArea.Top
+        Me.Location = New Point(x, y)
 
-        Me.Bounds = New Rectangle(x, y, maxW, h)
-        ApplyRoundedCorners()
+        _list.SelectedIndex = _selected
         If Not Me.Visible Then Me.Show()
-        Invalidate()
+        Me.Refresh()
     End Sub
 
     Public Sub HideWindow()
-        items.Clear()
+        _items.Clear()
+        _list.Items.Clear()
+        _selected = 0
         If Me.Visible Then Me.Hide()
     End Sub
 
-    Public Sub ApplyTheme(ByVal back As Color, ByVal fore As Color, ByVal selBack As Color, ByVal selFore As Color, ByVal border As Color)
-        BackTheme = back
-        ForeTheme = fore
-        SelBackTheme = selBack
-        SelForeTheme = selFore
-        BorderTheme = border
-        Invalidate()
+    ''' <summary>Moves the highlight by <paramref name="delta"/>, wrapping at the ends.</summary>
+    Public Sub MoveSelection(ByVal delta As Integer)
+        If _items.Count = 0 Then Return
+        _selected += delta
+        If _selected < 0 Then _selected = _items.Count - 1
+        If _selected >= _items.Count Then _selected = 0
+        _list.SelectedIndex = _selected
+        _list.Invalidate()
     End Sub
 
-    Private Function GetRoundedRectPath(ByVal rect As Rectangle, ByVal radius As Integer) As System.Drawing.Drawing2D.GraphicsPath
-        Dim path As New System.Drawing.Drawing2D.GraphicsPath()
-        Dim r2 As Integer = radius * 2
-        path.StartFigure()
-        path.AddArc(rect.X, rect.Y, r2, r2, 180, 90)
-        path.AddArc(rect.Right - r2, rect.Y, r2, r2, 270, 90)
-        path.AddArc(rect.Right - r2, rect.Bottom - r2, r2, r2, 0, 90)
-        path.AddArc(rect.X, rect.Bottom - r2, r2, r2, 90, 90)
-        path.CloseFigure()
-        Return path
-    End Function
+    Public Sub ApplyTheme(ByVal t As Theme)
+        If t Is Nothing Then Return
+        _back = t.SuggestBack
+        _fore = t.SuggestFore
+        _selBack = t.SuggestSelectBack
+        _selFore = t.SuggestSelectFore
+        Me.BackColor = _back
+        _list.BackColor = _back
+        _list.ForeColor = _fore
+        _list.Invalidate()
+    End Sub
 
-    Private Sub ApplyRoundedCorners()
-        Using path As System.Drawing.Drawing2D.GraphicsPath = GetRoundedRectPath(New Rectangle(0, 0, Width, Height), 6)
-            Me.Region = New Region(path)
+    ' --- rendering / mouse ------------------------------------------------
+
+    Private Sub List_DrawItem(ByVal sender As Object, ByVal e As DrawItemEventArgs)
+        If e.Index < 0 Then Return
+        Dim selected As Boolean = (e.Index = _selected)
+        Dim bg As Color = If(selected, _selBack, _back)
+        Dim fg As Color = If(selected, _selFore, _fore)
+
+        Using b As New SolidBrush(bg)
+            e.Graphics.FillRectangle(b, e.Bounds)
+        End Using
+        Using b As New SolidBrush(fg)
+            Dim sf As New StringFormat() With {.LineAlignment = StringAlignment.Center}
+            Dim r As New RectangleF(e.Bounds.X + 6, e.Bounds.Y, e.Bounds.Width - 8, e.Bounds.Height)
+            e.Graphics.DrawString(_list.Items(e.Index).ToString(), _list.Font, b, r, sf)
         End Using
     End Sub
 
-    Protected Overrides Sub OnPaint(e As PaintEventArgs)
-        Dim g As Graphics = e.Graphics
-        g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit
-        g.SmoothingMode = SmoothingMode.AntiAlias
-        g.Clear(BackTheme)
-
-        For i As Integer = 0 To items.Count - 1
-            Dim r As New Rectangle(0, i * rowHeight + 2, Me.Width, rowHeight)
-            If i = selected Then
-                Dim highlightRect As New Rectangle(4, i * rowHeight + 3, Me.Width - 8, rowHeight - 2)
-                Using path As GraphicsPath = GetRoundedRectPath(highlightRect, 4)
-                    Using b As New SolidBrush(SelBackTheme)
-                        g.FillPath(b, path)
-                    End Using
-                End Using
-            End If
-
-            Dim numStr As String = (i + 1).ToString() & "."
-            Using nb As New SolidBrush(NumTheme)
-                g.DrawString(numStr, numFont, nb, New PointF(padX - 4, i * rowHeight + 7))
-            End Using
-
-            Dim fc As Color = If(i = selected, SelForeTheme, ForeTheme)
-            Using fb As New SolidBrush(fc)
-                g.DrawString(items(i), itemFont, fb, New PointF(padX + 16, i * rowHeight + 4))
-            End Using
-        Next
-
-        ' Border
-        Dim borderRect As New Rectangle(0, 0, Me.Width - 1, Me.Height - 1)
-        Using path As GraphicsPath = GetRoundedRectPath(borderRect, 6)
-            Using p As New Pen(BorderTheme, 1)
-                g.DrawPath(p, path)
-            End Using
-        End Using
+    Private Sub List_MouseClick(ByVal sender As Object, ByVal e As MouseEventArgs)
+        Dim idx As Integer = _list.IndexFromPoint(e.Location)
+        If idx >= 0 AndAlso idx < _items.Count Then
+            _selected = idx
+            _list.Invalidate()
+        End If
     End Sub
 
 End Class

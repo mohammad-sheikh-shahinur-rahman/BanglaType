@@ -52,10 +52,11 @@ Public Class ConverterWindow
             .ForeColor = Color.Black
         }
 
+        ' Use standard SutonnyMJ for ANSI if installed
         txtBijoy = New TextBox() With {
             .Multiline = True,
             .ScrollBars = ScrollBars.Vertical,
-            .Font = New Font("SutonnyMJ", 12.0!, FontStyle.Regular), ' Use standard SutonnyMJ for ANSI if installed
+            .Font = New Font("SutonnyMJ", 12.0!, FontStyle.Regular),
             .Location = New Point(15, 260),
             .Size = New Size(655, 140),
             .BackColor = Color.White,

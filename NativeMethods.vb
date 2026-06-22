@@ -107,21 +107,47 @@ Public Class NativeMethods
     Friend Shared Function GetWindowText(ByVal hWnd As IntPtr, ByVal lpString As System.Text.StringBuilder, ByVal nMaxCount As Integer) As Integer
     End Function
 
+    Private Shared cachedHWnd As IntPtr = IntPtr.Zero
+    Private Shared cachedProcessName As String = ""
+    Private Shared cachedWindowTitle As String = ""
+    Private Shared cachedTime As DateTime = DateTime.MinValue
+
     Public Shared Function GetActiveAppInfo(ByRef processName As String, ByRef windowTitle As String) As Boolean
         Try
             Dim hWnd As IntPtr = GetForegroundWindow()
-            If hWnd <> IntPtr.Zero Then
-                Dim pid As Integer = 0
-                GetWindowThreadProcessId(hWnd, pid)
-                If pid > 0 Then
-                    Dim proc As System.Diagnostics.Process = System.Diagnostics.Process.GetProcessById(pid)
-                    processName = proc.ProcessName
-                    
-                    Dim sb As New System.Text.StringBuilder(256)
-                    GetWindowText(hWnd, sb, 256)
-                    windowTitle = sb.ToString()
-                    Return True
-                End If
+            If hWnd = IntPtr.Zero Then Return False
+
+            Dim now As DateTime = DateTime.Now
+            If hWnd = cachedHWnd AndAlso (now - cachedTime).TotalMilliseconds < 2000 Then
+                processName = cachedProcessName
+                windowTitle = cachedWindowTitle
+                Return True
+            End If
+
+            Dim pid As Integer = 0
+            GetWindowThreadProcessId(hWnd, pid)
+            If pid > 0 Then
+                Dim procName As String = ""
+                Try
+                    Using proc As System.Diagnostics.Process = System.Diagnostics.Process.GetProcessById(pid)
+                        procName = proc.ProcessName
+                    End Using
+                Catch
+                    procName = "unknown"
+                End Try
+
+                Dim sb As New System.Text.StringBuilder(256)
+                GetWindowText(hWnd, sb, 256)
+                Dim winTitle As String = sb.ToString()
+
+                cachedHWnd = hWnd
+                cachedProcessName = procName
+                cachedWindowTitle = winTitle
+                cachedTime = now
+
+                processName = procName
+                windowTitle = winTitle
+                Return True
             End If
         Catch
         End Try

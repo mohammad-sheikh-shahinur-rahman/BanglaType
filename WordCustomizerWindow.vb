@@ -23,7 +23,7 @@ Public Class WordCustomizerWindow
 
     Private Sub InitializeComponent()
         ' Setup Form
-        Me.Text = "Custom Word Builder"
+        Me.Text = "BanglaType Word Customizer"
         Me.Size = New Size(400, 320)
         Me.FormBorderStyle = FormBorderStyle.None
         Me.StartPosition = FormStartPosition.CenterScreen

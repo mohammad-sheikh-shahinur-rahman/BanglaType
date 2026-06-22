@@ -1,5 +1,5 @@
 # ⌨️ BanglaType Keyboard
-> A Free, Open-Source, and Intelligent Bangla/English Input Method Editor (IME) for Windows OS.
+> A Free and Intelligent Bangla/English Input Method Editor (IME) for Windows OS.
 
 ---
 
@@ -63,13 +63,13 @@
 ---
 
 ## 📥 Downloads & Releases
-Download standalone executables, portable ZIP packages, and the professional setup installer directly from the [GitHub Releases Page](https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/releases/tag/v1.0.0) or locate them inside the [Releases/](file:///C:/Users/shahi/Downloads/borno-lite-main/Releases) folder:
-* **Professional Setup Installer**: [BanglaTypeInstaller.exe](file:///C:/Users/shahi/Downloads/borno-lite-main/Releases/BanglaTypeInstaller.exe)
-* **Standalone Executable**: [BanglaType.exe](file:///C:/Users/shahi/Downloads/borno-lite-main/Releases/BanglaType.exe)
-* **64-bit Portable Edition**: [BanglaType_Portable_x64.zip](file:///C:/Users/shahi/Downloads/borno-lite-main/Releases/BanglaType_Portable_x64.zip)
-* **32-bit Portable Edition**: [BanglaType_Portable_x86.zip](file:///C:/Users/shahi/Downloads/borno-lite-main/Releases/BanglaType_Portable_x86.zip)
+Download standalone executables, portable ZIP packages, and the professional setup installer directly from the [GitHub Releases Page](https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/releases/tag/v1.0.1) or locate them inside the [Releases/](file:///C:/Users/shahi/Downloads/Compressed/BanglaType/Releases) folder:
+* **Professional Setup Installer**: [BanglaTypeInstaller.exe](file:///C:/Users/shahi/Downloads/Compressed/BanglaType/Releases/BanglaTypeInstaller.exe)
+* **Standalone Executable**: [BanglaType.exe](file:///C:/Users/shahi/Downloads/Compressed/BanglaType/Releases/BanglaType.exe)
+* **64-bit Portable Edition**: [BanglaType_Portable_x64.zip](file:///C:/Users/shahi/Downloads/Compressed/BanglaType/Releases/BanglaType_Portable_x64.zip)
+* **32-bit Portable Edition**: [BanglaType_Portable_x86.zip](file:///C:/Users/shahi/Downloads/Compressed/BanglaType/Releases/BanglaType_Portable_x86.zip)
 
 ---
 
 ## 📄 License
-This project is licensed under the GPL-3.0 License. See the [LICENSE](file:///C:/Users/shahi/Downloads/borno-lite-main/LICENSE) file for more details.
+This project is licensed under the BanglaType Keyboard - End User License Agreement (EULA). See the [LICENSE](file:///C:/Users/shahi/Downloads/Compressed/BanglaType/LICENSE) file for more details.

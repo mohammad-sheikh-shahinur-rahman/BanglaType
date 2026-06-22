@@ -27,6 +27,7 @@ Partial Class MainUI
         Me.btnMode = New System.Windows.Forms.Button()
         Me.btnSettings = New System.Windows.Forms.Button()
         Me.btnVoice = New System.Windows.Forms.Button()
+        Me.btnNotepad = New System.Windows.Forms.Button()
         Me.buttonClose = New System.Windows.Forms.Button()
         Me.buttonInfo = New System.Windows.Forms.Button()
         Me.NotifyIcon1 = New System.Windows.Forms.NotifyIcon(Me.components)
@@ -70,13 +71,26 @@ Partial Class MainUI
         Me.btnVoice.Text = "🎤"
         Me.btnVoice.UseVisualStyleBackColor = False
         '
+        'btnNotepad
+        '
+        Me.btnNotepad.BackColor = System.Drawing.Color.Transparent
+        Me.btnNotepad.FlatAppearance.BorderSize = 0
+        Me.btnNotepad.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.btnNotepad.Font = New System.Drawing.Font("Segoe UI", 10.0!)
+        Me.btnNotepad.Location = New System.Drawing.Point(130, 4)
+        Me.btnNotepad.Name = "btnNotepad"
+        Me.btnNotepad.Size = New System.Drawing.Size(24, 24)
+        Me.btnNotepad.TabIndex = 6
+        Me.btnNotepad.Text = "📝"
+        Me.btnNotepad.UseVisualStyleBackColor = False
+        '
         'btnSettings
         '
         Me.btnSettings.BackColor = System.Drawing.Color.Transparent
         Me.btnSettings.FlatAppearance.BorderSize = 0
         Me.btnSettings.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.btnSettings.Font = New System.Drawing.Font("Segoe UI", 10.0!)
-        Me.btnSettings.Location = New System.Drawing.Point(130, 4)
+        Me.btnSettings.Location = New System.Drawing.Point(158, 4)
         Me.btnSettings.Name = "btnSettings"
         Me.btnSettings.Size = New System.Drawing.Size(24, 24)
         Me.btnSettings.TabIndex = 2
@@ -89,7 +103,7 @@ Partial Class MainUI
         Me.buttonClose.FlatAppearance.BorderSize = 0
         Me.buttonClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.buttonClose.Font = New System.Drawing.Font("Segoe UI", 8.0!)
-        Me.buttonClose.Location = New System.Drawing.Point(158, 4)
+        Me.buttonClose.Location = New System.Drawing.Point(186, 4)
         Me.buttonClose.Name = "buttonClose"
         Me.buttonClose.Size = New System.Drawing.Size(24, 24)
         Me.buttonClose.TabIndex = 3
@@ -118,10 +132,11 @@ Partial Class MainUI
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(190, 32)
+        Me.ClientSize = New System.Drawing.Size(218, 32)
         Me.Controls.Add(Me.logoBox)
         Me.Controls.Add(Me.btnMode)
         Me.Controls.Add(Me.btnVoice)
+        Me.Controls.Add(Me.btnNotepad)
         Me.Controls.Add(Me.btnSettings)
         Me.Controls.Add(Me.buttonClose)
         Me.Controls.Add(Me.buttonInfo)
@@ -141,6 +156,7 @@ Partial Class MainUI
     Friend WithEvents btnMode As Button
     Friend WithEvents btnSettings As Button
     Friend WithEvents btnVoice As Button
+    Friend WithEvents btnNotepad As Button
     Friend WithEvents buttonClose As Button
     Friend WithEvents buttonInfo As Button
     Friend WithEvents NotifyIcon1 As NotifyIcon

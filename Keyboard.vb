@@ -1,4 +1,4 @@
-﻿'
+'
 '
 '   This program Is free software; you can redistribute it And/Or modify
 '   it under the terms Of the GNU General Public License As published by
@@ -147,11 +147,10 @@ Module Keyboard
         Dim keyZWNJ As Boolean
 
         If (Not My.Computer.Keyboard.CtrlKeyDown And Not My.Computer.Keyboard.AltKeyDown) Then
-
-
-
-
-
+            ' Safety check to prevent IndexOutOfRangeException
+            If Layout Is Nothing OrElse crlay < 0 OrElse crlay >= Layout.Length OrElse Layout(crlay) Is Nothing Then
+                Return False
+            End If
 
             Try
                 Dim numlay As Integer = numlay
