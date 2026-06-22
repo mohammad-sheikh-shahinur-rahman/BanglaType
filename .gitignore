@@ -16,3 +16,9 @@ bin_x64/
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+
+# NuGet packaging scratch
+.nupkg_build/
+artifacts/
+*.nupkg
+LICENSE.txt

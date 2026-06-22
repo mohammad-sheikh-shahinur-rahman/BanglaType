@@ -1,0 +1,44 @@
+name: Publish NuGet Package
+
+# Publishes the BanglaType NuGet package to GitHub Packages.
+# Runs automatically when a GitHub Release is published, or manually via the Actions tab.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+  discussions: write
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
+
+      - name: Stage license file (NuGet requires a .txt/.md extension)
+        shell: pwsh
+        run: Copy-Item LICENSE LICENSE.txt -Force
+
+      - name: Pack
+        run: nuget pack BanglaType.nuspec -OutputDirectory artifacts -NonInteractive
+
+      - name: Push to GitHub Packages
+        shell: pwsh
+        run: |
+          nuget source Add -Name github `
+            -Source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" `
+            -Username ${{ github.repository_owner }} `
+            -Password ${{ secrets.GITHUB_TOKEN }} `
+            -StorePasswordInClearText
+          nuget push artifacts\*.nupkg `
+            -Source github `
+            -ApiKey ${{ secrets.GITHUB_TOKEN }} `
+            -SkipDuplicate `
+            -NonInteractive

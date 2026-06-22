@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>BanglaType</id>
+    <version>1.0.1</version>
+    <title>BanglaType Keyboard</title>
+    <authors>Mohammad Sheikh Shahinur Rahman</authors>
+    <owners>mohammad-sheikh-shahinur-rahman</owners>
+    <projectUrl>https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType</projectUrl>
+    <repository type="git" url="https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType.git" />
+    <license type="file">LICENSE.txt</license>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>BanglaType is a free, lightweight, and professional-grade Bangla/English Input Method Editor (IME) for Windows. It offers smart phonetic and fixed layouts, AI-powered next-word prediction, voice typing, and a 100% offline-first, no-telemetry design. This package bundles the standalone executable and professional setup installer.</description>
+    <summary>Free and intelligent Bangla/English IME for Windows.</summary>
+    <releaseNotes>v1.0.1 - New layout data (Avro, Borno, Munir Optima, Jatiya, regex), improved parser/UI/keyboard logic, EULA 1.0.1, silent VC++ redistributable check, cleaner uninstall.</releaseNotes>
+    <copyright>Copyright (c) Mohammad Sheikh Shahinur Rahman</copyright>
+    <tags>bangla bengali keyboard ime typing phonetic avro unicode windows</tags>
+  </metadata>
+  <files>
+    <file src="Releases\BanglaType.exe" target="tools\BanglaType.exe" />
+    <file src="Releases\BanglaTypeInstaller.exe" target="tools\BanglaTypeInstaller.exe" />
+    <file src="README.md" target="README.md" />
+    <file src="LICENSE.txt" target="LICENSE.txt" />
+  </files>
+</package>
