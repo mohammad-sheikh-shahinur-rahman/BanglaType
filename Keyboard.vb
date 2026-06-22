@@ -24,22 +24,26 @@ Imports Microsoft.VisualBasic.CompilerServices
 
 
 Module Keyboard
-    Public Declare Function UnhookWindowsHookEx Lib "user32" _
-      (ByVal hHook As Integer) As Integer
+    <DllImport("user32.dll", CharSet:=CharSet.Ansi)>
+    Public Function UnhookWindowsHookEx(ByVal hHook As Integer) As Integer
+    End Function
 
-    Public Declare Function SetWindowsHookEx Lib "user32" _
-      Alias "SetWindowsHookExA" (ByVal idHook As Integer,
+    <DllImport("user32.dll", EntryPoint:="SetWindowsHookExA", CharSet:=CharSet.Ansi)>
+    Public Function SetWindowsHookEx(ByVal idHook As Integer,
       ByVal lpfn As KeyboardHookDelegate, ByVal hmod As Integer,
       ByVal dwThreadId As Integer) As Integer
+    End Function
 
-    Private Declare Function GetAsyncKeyState Lib "user32" _
-      (ByVal vKey As Integer) As Integer
+    <DllImport("user32.dll", CharSet:=CharSet.Ansi)>
+    Private Function GetAsyncKeyState(ByVal vKey As Integer) As Integer
+    End Function
 
-    Private Declare Function CallNextHookEx Lib "user32" _
-      (ByVal hHook As Integer,
+    <DllImport("user32.dll", CharSet:=CharSet.Ansi)>
+    Private Function CallNextHookEx(ByVal hHook As Integer,
       ByVal nCode As Integer,
       ByVal wParam As Integer,
       ByVal lParam As KBDLLHOOKSTRUCT) As Integer
+    End Function
 
     Public Structure KBDLLHOOKSTRUCT
         Public vkCode As Integer
