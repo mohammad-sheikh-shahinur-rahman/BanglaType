@@ -2059,6 +2059,11 @@ Public Class MainUI
         BuildTrayMenu()
     End Sub
 
+    ''' <summary>Public entry point so other windows (e.g. the Notepad) can start voice typing.</summary>
+    Public Sub StartVoiceTyping()
+        TriggerVoiceTyping()
+    End Sub
+
     Private Sub TriggerVoiceTyping()
         StartVoiceListener()
         EnsureVoiceTypingHtml()

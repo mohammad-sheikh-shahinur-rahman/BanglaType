@@ -25,6 +25,14 @@ Public Class GeminiAIWindow
         InitializeComponent()
     End Sub
 
+    ''' <summary>Opens the assistant pre-filled with the given text (e.g. the notepad selection).</summary>
+    Public Sub New(ByVal seedText As String)
+        InitializeComponent()
+        If Not String.IsNullOrEmpty(seedText) AndAlso txtInput IsNot Nothing Then
+            txtInput.Text = seedText
+        End If
+    End Sub
+
     Private Sub InitializeComponent()
         ' Setup Form
         Me.Text = "BanglaType Gemini AI Assistant"

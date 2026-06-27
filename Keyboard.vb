@@ -106,6 +106,13 @@ Module Keyboard
 
     Public block As Boolean
 
+    ''' <summary>
+    ''' Set by NotepadWindow while it is focused and its own Banglish (phonetic) engine
+    ''' is active. The global hook then steps aside so the notepad's local engine handles
+    ''' typing — preventing the two from double-converting the same keystroke.
+    ''' </summary>
+    Public NotepadPhoneticActive As Boolean = False
+
 
 
     Public Function isModifier(ByVal vkCode As Integer) As Boolean
@@ -641,6 +648,12 @@ LoopStart:
 
             HideSuggest()
             Return True
+        End If
+
+        ' The BanglaType Notepad runs its own phonetic engine while focused; don't
+        ' double-process keystrokes that it will handle itself.
+        If NotepadPhoneticActive Then
+            Return False
         End If
 
         If isActivated And MainUI.LayoutList.Items.Count > 0 Then
