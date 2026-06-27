@@ -112,29 +112,15 @@ Public Class ConverterWindow
         Me.Controls.Add(btnToUnicode)
         Me.Controls.Add(btnClose)
 
-        ' Apply Current Theme if available
-        Try
-            If System.Windows.Forms.Application.OpenForms.Count > 0 Then
-                Dim main As MainUI = TryCast(System.Windows.Forms.Application.OpenForms(0), MainUI)
-                If main IsNot Nothing Then
-                    Me.BackColor = main.ThemeTopbarBack
-                    lblUnicode.ForeColor = main.currentButtonFore
-                    lblBijoy.ForeColor = main.currentButtonFore
-                    
-                    btnToBijoy.BackColor = main.ThemeBorderColor
-                    btnToBijoy.ForeColor = main.currentButtonFore
-                    btnToBijoy.FlatAppearance.BorderColor = main.ThemeBorderColor
-                    
-                    btnToUnicode.BackColor = main.ThemeBorderColor
-                    btnToUnicode.ForeColor = main.currentButtonFore
-                    btnToUnicode.FlatAppearance.BorderColor = main.ThemeBorderColor
-                    
-                    btnClose.BackColor = main.ThemeBorderColor
-                    btnClose.ForeColor = main.currentButtonFore
-                    btnClose.FlatAppearance.BorderColor = main.ThemeBorderColor
-                End If
-            End If
-        Catch
-        End Try
+        ' Apply the active theme; the two converters are primary actions.
+        UiTheme.Style(Me)
+        UiTheme.MakePrimary(btnToBijoy)
+        UiTheme.MakePrimary(btnToUnicode)
+
+        Dim contentBack As Color = UiTheme.Blend(UiTheme.SurfaceBack(), UiTheme.ForeTone(), 0.06)
+        txtUnicode.BackColor = contentBack
+        txtUnicode.ForeColor = UiTheme.ForeTone()
+        txtBijoy.BackColor = contentBack
+        txtBijoy.ForeColor = UiTheme.ForeTone()
     End Sub
 End Class

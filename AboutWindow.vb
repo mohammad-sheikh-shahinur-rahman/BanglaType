@@ -109,7 +109,7 @@ Public Class AboutWindow
             .Text = "Close",
             .Font = New Font("Segoe UI", 9.5!, FontStyle.Regular),
             .Location = New Point(395, 430),
-            .Size = New Size(75, 30),
+            .Size = New Size(75, 32),
             .FlatStyle = FlatStyle.Flat
         }
         AddHandler btnClose.Click, Sub(sender, e) Me.Close()
@@ -120,20 +120,11 @@ Public Class AboutWindow
         Me.Controls.Add(txtFeatures)
         Me.Controls.Add(btnClose)
 
-        ' Apply Current Theme if available
-        Try
-            If System.Windows.Forms.Application.OpenForms.Count > 0 Then
-                Dim main As MainUI = TryCast(System.Windows.Forms.Application.OpenForms(0), MainUI)
-                If main IsNot Nothing Then
-                    Me.BackColor = main.ThemeTopbarBack
-                    lblTitle.ForeColor = main.currentButtonFore
-                    lblDev.ForeColor = main.currentButtonFore
-                    btnClose.BackColor = main.ThemeBorderColor
-                    btnClose.ForeColor = main.currentButtonFore
-                    btnClose.FlatAppearance.BorderColor = main.ThemeBorderColor
-                End If
-            End If
-        Catch
-        End Try
+        ' Apply the active theme to the whole dialog, then accent the title.
+        UiTheme.Style(Me)
+        UiTheme.MakePrimary(btnClose)
+        lblTitle.ForeColor = UiTheme.Accent()
+        txtFeatures.BackColor = UiTheme.Blend(UiTheme.SurfaceBack(), UiTheme.ForeTone(), 0.06)
+        txtFeatures.ForeColor = UiTheme.ForeTone()
     End Sub
 End Class

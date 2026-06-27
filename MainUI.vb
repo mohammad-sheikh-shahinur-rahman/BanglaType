@@ -1016,6 +1016,13 @@ Public Class MainUI
         Dim rect As New Rectangle(0, 0, Me.ClientSize.Width - 1, Me.ClientSize.Height - 1)
         e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias
         Using path As System.Drawing.Drawing2D.GraphicsPath = GetRoundedRectPath(rect, 15)
+            ' Soft top-to-bottom sheen for a more premium, glassy topbar.
+            Dim topTone As Color = UiTheme.Blend(ThemeTopbarBack, Color.White, 0.07)
+            Using lg As New System.Drawing.Drawing2D.LinearGradientBrush(
+                New Rectangle(0, 0, Me.ClientSize.Width, Me.ClientSize.Height),
+                topTone, ThemeTopbarBack, System.Drawing.Drawing2D.LinearGradientMode.Vertical)
+                e.Graphics.FillPath(lg, path)
+            End Using
             Using p As New Pen(ThemeBorderColor, 1)
                 e.Graphics.DrawPath(p, path)
             End Using
@@ -1028,6 +1035,23 @@ Public Class MainUI
         ThemeManager.Apply(Me, t, SuggWindow)
         AppSettings.ThemeName = t.Name
         AppSettings.Save()
+        RefreshTopbarChrome()
+        UpdateModeUI()
+    End Sub
+
+    ''' <summary>Applies theme-aware hover feedback to the topbar buttons.</summary>
+    Private Sub RefreshTopbarChrome()
+        Try
+            Dim hover As Color = UiTheme.Blend(ThemeTopbarBack, currentButtonFore, 0.16)
+            Dim down As Color = UiTheme.Blend(ThemeTopbarBack, currentButtonFore, 0.28)
+            For Each b As Button In New Button() {btnMode, btnVoice, btnNotepad, btnSettings}
+                b.FlatAppearance.MouseOverBackColor = hover
+                b.FlatAppearance.MouseDownBackColor = down
+                b.Cursor = Cursors.Hand
+            Next
+            buttonClose.Cursor = Cursors.Hand
+        Catch
+        End Try
     End Sub
 
     ''' <summary>Re-selects the layout chosen in a previous session, if still available.</summary>
@@ -1397,15 +1421,19 @@ Public Class MainUI
 
     Public Sub UpdateModeUI()
         Dim modeText As String = "English"
+        Dim modeColor As Color = currentButtonFore   ' neutral grey for English
         If isActivated Then
             If (isPhonetic AndAlso isPhoneticSelected) OrElse isAvroSelected Then
                 modeText = "Banglish"
+                modeColor = OffColorTheme
             Else
                 modeText = "Bangla"
+                modeColor = OnColorTheme
             End If
         End If
 
         btnMode.Text = modeText
+        btnMode.ForeColor = modeColor
         UpdateTrayIcon()
 
         If floatKeyboard IsNot Nothing AndAlso floatKeyboard.Visible Then

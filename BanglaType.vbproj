@@ -96,6 +96,7 @@
     </Compile>
     <Compile Include="Theme.vb" />
     <Compile Include="ThemeManager.vb" />
+    <Compile Include="UiTheme.vb" />
     <Compile Include="BijoyConverter.vb" />
     <Compile Include="AboutWindow.vb">
       <SubType>Form</SubType>
