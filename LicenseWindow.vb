@@ -63,6 +63,10 @@ Public Class LicenseWindow
                 licenseText = GetDefaultLicenseText()
             End If
         End If
+
+        ' Always reflect the running build's version in the EULA, regardless of
+        ' what the on-disk LICENSE file or the embedded fallback happens to say.
+        licenseText = StampCurrentVersion(licenseText)
         txtLicense.Text = licenseText
 
         ' Close Button
@@ -78,27 +82,39 @@ Public Class LicenseWindow
         Me.Controls.Add(txtLicense)
         Me.Controls.Add(btnClose)
 
-        ' Apply Current Theme if available
+        ' Apply the active theme through the shared styler.
+        UiTheme.Style(Me)
+        UiTheme.MakePrimary(btnClose)
+        lblTitle.ForeColor = UiTheme.Accent()
+        txtLicense.BackColor = UiTheme.Blend(UiTheme.SurfaceBack(), UiTheme.ForeTone(), 0.06)
+        txtLicense.ForeColor = UiTheme.ForeTone()
+    End Sub
+
+    ''' <summary>
+    ''' Rewrites the "Version:" line in the EULA text to the running assembly's
+    ''' version so the displayed licence is never stale. The version string is
+    ''' derived from AssemblyInfo, so each release picks it up automatically with
+    ''' no manual edit to this window.
+    ''' </summary>
+    Private Function StampCurrentVersion(ByVal text As String) As String
         Try
-            If System.Windows.Forms.Application.OpenForms.Count > 0 Then
-                Dim main As MainUI = TryCast(System.Windows.Forms.Application.OpenForms(0), MainUI)
-                If main IsNot Nothing Then
-                    Me.BackColor = main.ThemeTopbarBack
-                    lblTitle.ForeColor = main.currentButtonFore
-                    btnClose.BackColor = main.ThemeBorderColor
-                    btnClose.ForeColor = main.currentButtonFore
-                End If
+            Dim ver As Version = Reflection.Assembly.GetExecutingAssembly().GetName().Version
+            Dim shortVer As String = String.Format("{0}.{1}.{2}", ver.Major, ver.Minor, ver.Build)
+            Dim re As New System.Text.RegularExpressions.Regex("(?im)^(\s*Version:\s*).*$")
+            If re.IsMatch(text) Then
+                Return re.Replace(text, "${1}" & shortVer, 1)
             End If
         Catch
         End Try
-    End Sub
+        Return text
+    End Function
 
     Private Function GetDefaultLicenseText() As String
         Dim sb As New System.Text.StringBuilder()
         sb.AppendLine("BanglaType Keyboard - End User License Agreement (EULA)")
         sb.AppendLine()
         sb.AppendLine("Software Name: BanglaType Keyboard")
-        sb.AppendLine("Version: 1.0.1")
+        sb.AppendLine("Version: 1.0.3")
         sb.AppendLine("Developer: Mohammad Sheikh Shahinur Rahman")
         sb.AppendLine("Effective Date: 21 June 2026")
         sb.AppendLine()
