@@ -745,9 +745,9 @@ Public Class NotepadWindow
             Return
         End If
         For Each p As String In items
-            Dim path As String = p
-            Dim item As New ToolStripMenuItem(Path.GetFileName(path)) With {.ToolTipText = path}
-            AddHandler item.Click, Sub() OpenPath(path)
+            Dim filePath As String = p
+            Dim item As New ToolStripMenuItem(Path.GetFileName(filePath)) With {.ToolTipText = filePath}
+            AddHandler item.Click, Sub() OpenPath(filePath)
             mnuRecent.DropDownItems.Add(item)
         Next
     End Sub
@@ -1049,8 +1049,8 @@ Public Class NotepadWindow
             New KeyValuePair(Of String, String)("় (নুক্তা)", "়"),
             New KeyValuePair(Of String, String)("্ (হসন্ত)", "্"),
             New KeyValuePair(Of String, String)("ৎ (খণ্ড ত)", "ৎ"),
-            New KeyValuePair(Of String, String)("“ ” (উদ্ধৃতি)", "“”"),
-            New KeyValuePair(Of String, String)("— (ড্যাশ)", "—")}
+            New KeyValuePair(Of String, String)(ChrW(&H201C) & " " & ChrW(&H201D) & " (উদ্ধৃতি)", ChrW(&H201C) & ChrW(&H201D)),
+            New KeyValuePair(Of String, String)(ChrW(&H2014) & " (ড্যাশ)", ChrW(&H2014))}
         For Each kv In pairs
             Dim text As String = kv.Value
             Dim it As New ToolStripMenuItem(kv.Key)
