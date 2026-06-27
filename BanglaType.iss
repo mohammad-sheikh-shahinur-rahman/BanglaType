@@ -1,5 +1,5 @@
 #define MyAppName "BanglaType"
-#define MyAppVersion "1.0.4"
+#define MyAppVersion "1.0.5"
 #define MyAppPublisher "Mohammad Sheikh Shahinur Rahman"
 #define MyAppExeName "BanglaType.exe"
 

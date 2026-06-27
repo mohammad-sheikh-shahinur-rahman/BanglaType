@@ -4,6 +4,21 @@ All notable changes to **BanglaType** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.5] - 2026-06-27
+
+### Fixed
+- **License Manager** — the version subtitle label was created but never added
+  to the form, making it invisible. It now shows the accent-coloured
+  `Version X.Y.Z  •  Release Build` badge, matching the About dialog.
+- **About & License windows crash** — `UiTheme.Blend()` could throw
+  `System.OverflowException` because `CInt()` banker-rounds `255.5 → 256`,
+  exceeding the 0–255 range expected by `Color.FromArgb`. Fixed by using
+  `Math.Truncate` and clamping with `Math.Min / Math.Max`.
+
+### Changed
+- Assembly, Inno (`BanglaType.iss`) and WiX (`BanglaType.wxs`) versions bumped
+  to **1.0.5**.
+
 ## [1.0.4] - 2026-06-27
 
 ### Changed

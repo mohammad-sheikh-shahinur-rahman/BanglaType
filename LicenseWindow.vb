@@ -87,6 +87,7 @@ Public Class LicenseWindow
 
         ' Add Controls
         Me.Controls.Add(lblTitle)
+        Me.Controls.Add(lblVersion)
         Me.Controls.Add(txtLicense)
         Me.Controls.Add(btnClose)
 
@@ -94,6 +95,7 @@ Public Class LicenseWindow
         UiTheme.Style(Me)
         UiTheme.MakePrimary(btnClose)
         lblTitle.ForeColor = UiTheme.Accent()
+        lblVersion.ForeColor = UiTheme.Accent()
         txtLicense.BackColor = UiTheme.Blend(UiTheme.SurfaceBack(), UiTheme.ForeTone(), 0.06)
         txtLicense.ForeColor = UiTheme.ForeTone()
     End Sub
