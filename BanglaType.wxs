@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  WiX v4+/v7 authoring for the BanglaType MSI installer.
+
+  Build (from the project root, after a Release build):
+    wix build BanglaType.wxs -arch x64 -o Output\BanglaType-1.0.2.msi
+
+  Note: unlike the Inno Setup installer, this MSI does NOT bundle the
+  Visual C++ 2015-2022 redistributables (that needs a Burn bootstrapper, which
+  produces an .exe, not an .msi). Use the Inno installer when redist handling is
+  required, or install vc_redist separately.
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="BanglaType"
+           Manufacturer="Mohammad Sheikh Shahinur Rahman"
+           Version="1.0.2.0"
+           UpgradeCode="E63A8A01-30AB-41C9-92A2-551428AB4B49"
+           Scope="perMachine"
+           Compressed="yes">
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of BanglaType is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Icon Id="AppIcon" SourceFile="banglatype.ico" />
+    <Property Id="ARPPRODUCTICON" Value="AppIcon" />
+    <Property Id="ARPURLINFOABOUT" Value="https://shahinurrahman.com/" />
+
+    <!-- Install layout: {ProgramFiles}\BanglaType\{,Resources,data} -->
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="BanglaType">
+        <Directory Id="ResourcesFolder" Name="Resources" />
+        <Directory Id="DataFolder" Name="data" />
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="AppProgramMenu" Name="BanglaType" />
+    </StandardDirectory>
+
+    <Feature Id="Main" Title="BanglaType" Level="1">
+      <ComponentGroupRef Id="AppFiles" />
+      <ComponentGroupRef Id="ResourceFiles" />
+      <ComponentGroupRef Id="DataFiles" />
+      <ComponentRef Id="AppShortcut" />
+    </Feature>
+
+    <!-- Application binaries -->
+    <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
+      <Files Include="bin\Release\BanglaType.exe" />
+      <Files Include="bin\Release\BanglaType.exe.config" />
+      <Files Include="bin\Release\BanglaType.xml" />
+    </ComponentGroup>
+
+    <!-- Bundled resources and language/dictionary data -->
+    <ComponentGroup Id="ResourceFiles" Directory="ResourcesFolder">
+      <Files Include="bin\Release\Resources\**" />
+    </ComponentGroup>
+
+    <ComponentGroup Id="DataFiles" Directory="DataFolder">
+      <Files Include="data\**" />
+    </ComponentGroup>
+
+    <!-- Start Menu shortcut -->
+    <Component Id="AppShortcut" Directory="AppProgramMenu" Guid="*">
+      <Shortcut Id="StartMenuShortcut"
+                Name="BanglaType"
+                Target="[INSTALLFOLDER]BanglaType.exe"
+                WorkingDirectory="INSTALLFOLDER"
+                Icon="AppIcon" />
+      <RemoveFolder Id="RemoveAppProgramMenu" Directory="AppProgramMenu" On="uninstall" />
+      <RegistryValue Root="HKCU" Key="Software\BanglaType" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+    </Component>
+
+  </Package>
+</Wix>
