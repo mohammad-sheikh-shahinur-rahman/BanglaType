@@ -5,6 +5,7 @@ Public Class AboutWindow
     Inherits Form
 
     Private lblTitle As Label
+    Private lblVersion As Label
     Private lblDev As Label
     Private txtFeatures As TextBox
     Private btnClose As Button
@@ -25,10 +26,18 @@ Public Class AboutWindow
 
         ' Title Label
         lblTitle = New Label() With {
-            .Text = "BanglaType Keyboard v" & Application.ProductVersion,
+            .Text = "BanglaType Keyboard",
             .Font = New Font("Segoe UI", 16.0!, FontStyle.Bold),
             .Location = New Point(15, 15),
-            .Size = New Size(470, 35)
+            .Size = New Size(470, 32)
+        }
+
+        ' Version badge — accent-coloured, always reflects the running build.
+        lblVersion = New Label() With {
+            .Text = "Version " & Application.ProductVersion & "  •  Release Build",
+            .Font = New Font("Segoe UI", 9.5!, FontStyle.Bold),
+            .Location = New Point(17, 49),
+            .Size = New Size(470, 18)
         }
 
         ' Developer Label
@@ -36,10 +45,10 @@ Public Class AboutWindow
             .Text = "Created by Mohammad Sheikh Shahinur Rahman" & vbCrLf & _
                     "Software Engineer | CTO | DevOps Architect | Independent Researcher | Writer & Poet" & vbCrLf & _
                     "Website: shahinurrahman.com  |  LinkedIn: mohammad-sheikh-shahinur-rahman" & vbCrLf & _
-                    "Version: " & Application.ProductVersion & " (Release Build) | Copyright © Mohammad Sheikh Shahinur Rahman.",
+                    "Copyright © Mohammad Sheikh Shahinur Rahman. All rights reserved.",
             .Font = New Font("Segoe UI", 9.0!, FontStyle.Regular),
-            .Location = New Point(15, 55),
-            .Size = New Size(470, 70)
+            .Location = New Point(15, 72),
+            .Size = New Size(470, 60)
         }
 
         ' Features TextBox
@@ -116,14 +125,16 @@ Public Class AboutWindow
 
         ' Add Controls
         Me.Controls.Add(lblTitle)
+        Me.Controls.Add(lblVersion)
         Me.Controls.Add(lblDev)
         Me.Controls.Add(txtFeatures)
         Me.Controls.Add(btnClose)
 
-        ' Apply the active theme to the whole dialog, then accent the title.
+        ' Apply the active theme to the whole dialog, then accent the title + version badge.
         UiTheme.Style(Me)
         UiTheme.MakePrimary(btnClose)
-        lblTitle.ForeColor = UiTheme.Accent()
+        lblTitle.ForeColor = UiTheme.ForeTone()
+        lblVersion.ForeColor = UiTheme.Accent()
         txtFeatures.BackColor = UiTheme.Blend(UiTheme.SurfaceBack(), UiTheme.ForeTone(), 0.06)
         txtFeatures.ForeColor = UiTheme.ForeTone()
     End Sub

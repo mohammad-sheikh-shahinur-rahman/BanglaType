@@ -4,6 +4,23 @@ All notable changes to **BanglaType** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.4] - 2026-06-27
+
+### Changed
+- **UI refresh** across the secondary dialogs and topbar:
+  - **About** dialog now leads with the app name and a dedicated accent
+    **version badge** (`Version 1.0.4 • Release Build`) for clearer at-a-glance
+    build identification.
+  - **License Manager** gains a live accent subtitle that shows the running
+    build's version next to the EULA heading, alongside the existing in-text
+    version stamping.
+  - **Topbar** buttons and logo now carry a `BanglaType v1.0.4` tooltip, and the
+    close button hover/press tones are theme-blended for a cleaner look.
+- The displayed licence version is sourced from the running assembly, so every
+  release picks it up automatically with no manual dialog edits.
+- Assembly, Inno (`BanglaType.iss`) and WiX (`BanglaType.wxs`) versions bumped
+  to **1.0.4**.
+
 ## [1.0.3] - 2026-06-27
 
 ### Added
@@ -72,6 +89,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Initial release: phonetic & fixed Bangla layouts, suggestions, voice typing,
   clipboard manager, custom layout builder, and Windows installer.
 
+[1.0.4]: https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/releases/tag/v1.0.4
 [1.0.3]: https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/releases/tag/v1.0.3
 [1.0.2]: https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/releases/tag/v1.0.2
 [1.0.1]: https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/releases/tag/v1.0.1

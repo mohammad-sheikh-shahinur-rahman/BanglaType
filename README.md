@@ -67,10 +67,10 @@
 ---
 
 ## 📥 Downloads & Releases
-Grab the latest installers from the **[GitHub Releases Page](https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/releases/latest)**. The current release is **v1.0.3**:
+Grab the latest installers from the **[GitHub Releases Page](https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/releases/latest)**. The current release is **v1.0.4**:
 
-* **Professional Setup Installer (recommended)** — bundles the Visual C++ runtimes: [BanglaTypeInstaller-1.0.3.exe](https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/releases/download/v1.0.3/BanglaTypeInstaller-1.0.3.exe)
-* **MSI Package** — per-machine install (install the VC++ runtime separately if needed): [BanglaType-1.0.3.msi](https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/releases/download/v1.0.3/BanglaType-1.0.3.msi)
+* **Professional Setup Installer (recommended)** — bundles the Visual C++ runtimes: [BanglaTypeInstaller-1.0.4.exe](https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/releases/download/v1.0.4/BanglaTypeInstaller-1.0.4.exe)
+* **MSI Package** — per-machine install (install the VC++ runtime separately if needed): [BanglaType-1.0.4.msi](https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/releases/download/v1.0.4/BanglaType-1.0.4.msi)
 
 > See the [CHANGELOG](CHANGELOG.md) for what's new in each release.
 

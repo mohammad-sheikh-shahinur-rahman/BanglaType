@@ -13,7 +13,7 @@
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
   <Package Name="BanglaType"
            Manufacturer="Mohammad Sheikh Shahinur Rahman"
-           Version="1.0.3.0"
+           Version="1.0.4.0"
            UpgradeCode="E63A8A01-30AB-41C9-92A2-551428AB4B49"
            Scope="perMachine"
            Compressed="yes">

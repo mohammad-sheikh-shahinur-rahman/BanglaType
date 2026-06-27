@@ -6,6 +6,7 @@ Public Class LicenseWindow
     Inherits Form
 
     Private lblTitle As Label
+    Private lblVersion As Label
     Private txtLicense As TextBox
     Private btnClose As Button
 
@@ -27,8 +28,15 @@ Public Class LicenseWindow
         lblTitle = New Label()
         lblTitle.Text = "BanglaType End User License Agreement"
         lblTitle.Font = New Font("Segoe UI", 12.0!, FontStyle.Bold)
-        lblTitle.Location = New Point(15, 15)
-        lblTitle.Size = New Size(470, 30)
+        lblTitle.Location = New Point(15, 14)
+        lblTitle.Size = New Size(470, 26)
+
+        ' Version subtitle — always reflects the running build's version.
+        lblVersion = New Label()
+        lblVersion.Text = "Version " & Application.ProductVersion & "  •  Release Build"
+        lblVersion.Font = New Font("Segoe UI", 9.5!, FontStyle.Bold)
+        lblVersion.Location = New Point(17, 41)
+        lblVersion.Size = New Size(470, 18)
 
         ' License TextBox
         txtLicense = New TextBox()
@@ -36,8 +44,8 @@ Public Class LicenseWindow
         txtLicense.ReadOnly = True
         txtLicense.ScrollBars = ScrollBars.Vertical
         txtLicense.Font = New Font("Consolas", 9.0!, FontStyle.Regular)
-        txtLicense.Location = New Point(15, 50)
-        txtLicense.Size = New Size(455, 400)
+        txtLicense.Location = New Point(15, 64)
+        txtLicense.Size = New Size(455, 388)
         txtLicense.BackColor = Color.White
         txtLicense.ForeColor = Color.Black
 
@@ -114,7 +122,7 @@ Public Class LicenseWindow
         sb.AppendLine("BanglaType Keyboard - End User License Agreement (EULA)")
         sb.AppendLine()
         sb.AppendLine("Software Name: BanglaType Keyboard")
-        sb.AppendLine("Version: 1.0.3")
+        sb.AppendLine("Version: 1.0.4")
         sb.AppendLine("Developer: Mohammad Sheikh Shahinur Rahman")
         sb.AppendLine("Effective Date: 21 June 2026")
         sb.AppendLine()
