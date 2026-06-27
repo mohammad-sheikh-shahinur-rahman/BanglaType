@@ -20,7 +20,7 @@ Public Class NotepadWindow
     Inherits Form
 
     Private mainMenu As MenuStrip
-    Private fileMenu, editMenu, formatMenu, viewMenu, banglaMenu As ToolStripMenuItem
+    Private fileMenu, editMenu, formatMenu, insertMenu, viewMenu, banglaMenu As ToolStripMenuItem
     Private mnuRecent As ToolStripMenuItem
 
     Private mnuPhonetic, mnuSuggestions, mnuAutoCorrect, mnuMacros As ToolStripMenuItem
@@ -29,6 +29,7 @@ Public Class NotepadWindow
     Private txtEditor As TextBox
     Private statusBar As StatusStrip
     Private statusLabel As ToolStripStatusLabel
+    Private zoomLabel As ToolStripStatusLabel
     Private modeLabel As ToolStripStatusLabel
 
     Private currentFilePath As String = ""
@@ -55,6 +56,13 @@ Public Class NotepadWindow
     Private printText As String = ""
     Private printCharIndex As Integer = 0
 
+    ' --- English (non-phonetic) suggestion state ---
+    Private engWordStart As Integer = 0
+    Private engWordLen As Integer = 0
+
+    ' --- auto-save / crash recovery ---
+    Private WithEvents autosaveTimer As New Timer()
+
     Private Const RecentMax As Integer = 8
 
     Public Sub New()
@@ -64,8 +72,53 @@ Public Class NotepadWindow
             MacroEngine.Load()
         Catch
         End Try
+        LoadNotepadSettings()
         suggWin = New SuggestionWindow()
         InitializeComponent()
+        ApplyLoadedPrefs()
+
+        autosaveTimer.Interval = 30000   ' 30s
+        autosaveTimer.Start()
+
+        OfferDraftRecovery()
+    End Sub
+
+    ' === persistent preferences =========================================
+
+    Private Sub LoadNotepadSettings()
+        ' Settings are already loaded at app startup (MainUI); just read the values.
+        phoneticMode = AppSettings.NotepadPhonetic
+        suggestionsEnabled = AppSettings.NotepadSuggestions
+        autoCorrectEnabled = AppSettings.NotepadAutoCorrect
+        macrosEnabled = AppSettings.NotepadMacros
+        isDark = AppSettings.NotepadDark
+    End Sub
+
+    ''' <summary>Applies saved font + word-wrap once the controls exist.</summary>
+    Private Sub ApplyLoadedPrefs()
+        Try
+            txtEditor.Font = New Font(AppSettings.NotepadFontName, AppSettings.NotepadFontSize, FontStyle.Regular)
+        Catch
+        End Try
+        mnuWordWrap.Checked = AppSettings.NotepadWordWrap
+        txtEditor.WordWrap = mnuWordWrap.Checked
+        txtEditor.ScrollBars = If(mnuWordWrap.Checked, ScrollBars.Vertical, ScrollBars.Both)
+        UpdateZoomIndicator()
+    End Sub
+
+    Private Sub SaveNotepadSettings()
+        Try
+            AppSettings.NotepadPhonetic = phoneticMode
+            AppSettings.NotepadSuggestions = suggestionsEnabled
+            AppSettings.NotepadAutoCorrect = autoCorrectEnabled
+            AppSettings.NotepadMacros = macrosEnabled
+            AppSettings.NotepadWordWrap = mnuWordWrap.Checked
+            AppSettings.NotepadDark = isDark
+            AppSettings.NotepadFontName = txtEditor.Font.FontFamily.Name
+            AppSettings.NotepadFontSize = txtEditor.Font.Size
+            AppSettings.Save()
+        Catch
+        End Try
     End Sub
 
     Private Sub InitializeComponent()
@@ -87,6 +140,7 @@ Public Class NotepadWindow
         AddHandler txtEditor.TextChanged, AddressOf TxtEditor_TextChanged
         AddHandler txtEditor.KeyPress, AddressOf TxtEditor_KeyPress
         AddHandler txtEditor.KeyDown, AddressOf TxtEditor_KeyDown
+        AddHandler txtEditor.KeyUp, AddressOf TxtEditor_KeyUp
         AddHandler txtEditor.MouseUp, AddressOf TxtEditor_MouseUp
         AddHandler txtEditor.MouseWheel, AddressOf TxtEditor_MouseWheel
 
@@ -99,8 +153,10 @@ Public Class NotepadWindow
             .Spring = True,
             .TextAlign = ContentAlignment.MiddleLeft
         }
+        zoomLabel = New ToolStripStatusLabel() With {.TextAlign = ContentAlignment.MiddleRight, .Text = "100%"}
         modeLabel = New ToolStripStatusLabel() With {.TextAlign = ContentAlignment.MiddleRight}
         statusBar.Items.Add(statusLabel)
+        statusBar.Items.Add(zoomLabel)
         statusBar.Items.Add(modeLabel)
 
         Me.Controls.Add(txtEditor)
@@ -159,9 +215,18 @@ Public Class NotepadWindow
             New ToolStripMenuItem("Zoom &Out", Nothing, AddressOf MnuZoomOut_Click, Keys.Control Or Keys.OemMinus),
             New ToolStripMenuItem("&Reset Zoom", Nothing, AddressOf MnuZoomReset_Click, Keys.Control Or Keys.D0)})
 
+        ' Insert
+        insertMenu = New ToolStripMenuItem("&Insert")
+        insertMenu.DropDownItems.AddRange(New ToolStripItem() {
+            BuildEmojiMenu(),
+            BuildSymbolMenu(),
+            New ToolStripSeparator(),
+            New ToolStripMenuItem("Bangla &Date (আজকের তারিখ)", Nothing, AddressOf MnuBanglaDate_Click),
+            New ToolStripMenuItem("Bangla Date && &Time", Nothing, AddressOf MnuBanglaDateTime_Click)})
+
         ' View
         viewMenu = New ToolStripMenuItem("&View")
-        mnuDarkMode = New ToolStripMenuItem("&Dark Mode", Nothing, AddressOf MnuDarkMode_Click)
+        mnuDarkMode = New ToolStripMenuItem("&Dark Mode", Nothing, AddressOf MnuDarkMode_Click) With {.Checked = isDark}
         viewMenu.DropDownItems.Add(mnuDarkMode)
 
         ' Bangla
@@ -173,15 +238,22 @@ Public Class NotepadWindow
         banglaMenu.DropDownItems.AddRange(New ToolStripItem() {
             mnuPhonetic, mnuSuggestions, mnuAutoCorrect, mnuMacros,
             New ToolStripSeparator(),
+            New ToolStripMenuItem("Check &Spelling...", Nothing, AddressOf MnuSpellCheck_Click, Keys.F7),
+            New ToolStripSeparator(),
             New ToolStripMenuItem("&Copy as Bijoy ANSI", Nothing, AddressOf MnuCopyBijoy_Click),
             New ToolStripMenuItem("Save as Bijoy ANSI...", Nothing, AddressOf MnuSaveBijoy_Click),
+            New ToolStripMenuItem("&Paste from Bijoy ANSI", Nothing, AddressOf MnuPasteBijoy_Click),
+            New ToolStripMenuItem("&Import Bijoy ANSI File...", Nothing, AddressOf MnuImportBijoy_Click),
+            New ToolStripSeparator(),
+            New ToolStripMenuItem("Numbers → &Bangla (১২৩)", Nothing, AddressOf MnuNumbersToBangla_Click),
+            New ToolStripMenuItem("Numbers → &English (123)", Nothing, AddressOf MnuNumbersToEnglish_Click),
             New ToolStripSeparator(),
             New ToolStripMenuItem("AI Assist (&Gemini)...", Nothing, AddressOf MnuAI_Click),
             New ToolStripMenuItem("&Voice Typing", Nothing, AddressOf MnuVoice_Click),
             New ToolStripSeparator(),
             New ToolStripMenuItem("How to type Banglish...", Nothing, AddressOf MnuPhoneticHelp_Click)})
 
-        mainMenu.Items.AddRange(New ToolStripItem() {fileMenu, editMenu, formatMenu, viewMenu, banglaMenu})
+        mainMenu.Items.AddRange(New ToolStripItem() {fileMenu, editMenu, formatMenu, insertMenu, viewMenu, banglaMenu})
 
         RebuildRecentMenu()
     End Sub
@@ -242,9 +314,7 @@ Public Class NotepadWindow
     End Sub
 
     Private Sub TxtEditor_KeyDown(sender As Object, e As KeyEventArgs)
-        If Not phoneticMode Then Return
-
-        ' Candidate-window navigation while it is visible.
+        ' Candidate-window navigation works in both phonetic and plain-English mode.
         If suggWin IsNot Nothing AndAlso suggWin.Visible AndAlso suggWin.Count > 0 Then
             Select Case e.KeyCode
                 Case Keys.Up
@@ -252,11 +322,18 @@ Public Class NotepadWindow
                 Case Keys.Down
                     suggWin.MoveSelection(1) : e.Handled = True : e.SuppressKeyPress = True : Return
                 Case Keys.Tab
-                    AcceptSuggestion(suggWin.SelectedIndex) : e.Handled = True : e.SuppressKeyPress = True : Return
+                    If phoneticMode Then
+                        AcceptSuggestion(suggWin.SelectedIndex)
+                    Else
+                        AcceptEnglishSuggestion(suggWin.SelectedIndex)
+                    End If
+                    e.Handled = True : e.SuppressKeyPress = True : Return
                 Case Keys.Escape
                     HideSuggestions() : e.Handled = True : e.SuppressKeyPress = True : Return
             End Select
         End If
+
+        If Not phoneticMode Then Return
 
         Select Case e.KeyCode
             Case Keys.Back
@@ -397,22 +474,26 @@ Public Class NotepadWindow
         ResetComposition()
         UpdateModeIndicator()
         Keyboard.NotepadPhoneticActive = (enabled AndAlso Me.ContainsFocus)
+        SaveNotepadSettings()
     End Sub
 
     Private Sub MnuSuggestions_Click(sender As Object, e As EventArgs)
         suggestionsEnabled = Not suggestionsEnabled
         mnuSuggestions.Checked = suggestionsEnabled
         If Not suggestionsEnabled Then HideSuggestions()
+        SaveNotepadSettings()
     End Sub
 
     Private Sub MnuAutoCorrect_Click(sender As Object, e As EventArgs)
         autoCorrectEnabled = Not autoCorrectEnabled
         mnuAutoCorrect.Checked = autoCorrectEnabled
+        SaveNotepadSettings()
     End Sub
 
     Private Sub MnuMacros_Click(sender As Object, e As EventArgs)
         macrosEnabled = Not macrosEnabled
         mnuMacros.Checked = macrosEnabled
+        SaveNotepadSettings()
     End Sub
 
     Private Sub MnuCopyBijoy_Click(sender As Object, e As EventArgs)
@@ -529,6 +610,8 @@ Public Class NotepadWindow
 
     Private Sub MnuZoomReset_Click(sender As Object, e As EventArgs)
         txtEditor.Font = New Font(txtEditor.Font.FontFamily, 12.0!, txtEditor.Font.Style)
+        UpdateZoomIndicator()
+        SaveNotepadSettings()
     End Sub
 
     Private Sub ZoomBy(ByVal steps As Integer)
@@ -536,6 +619,15 @@ Public Class NotepadWindow
         If newSize < 6 Then newSize = 6
         If newSize > 72 Then newSize = 72
         txtEditor.Font = New Font(txtEditor.Font.FontFamily, newSize, txtEditor.Font.Style)
+        UpdateZoomIndicator()
+        SaveNotepadSettings()
+    End Sub
+
+    ''' <summary>Shows the current font size as a percentage of the 12pt baseline.</summary>
+    Private Sub UpdateZoomIndicator()
+        If zoomLabel Is Nothing Then Return
+        Dim pct As Integer = CInt(Math.Round(txtEditor.Font.Size / 12.0! * 100.0!))
+        zoomLabel.Text = pct & "%"
     End Sub
 
     ' === Printing =======================================================
@@ -585,6 +677,7 @@ Public Class NotepadWindow
         isDark = Not isDark
         mnuDarkMode.Checked = isDark
         ApplyTheme()
+        SaveNotepadSettings()
     End Sub
 
     Private Sub ApplyTheme()
@@ -747,6 +840,7 @@ Public Class NotepadWindow
                 File.WriteAllText(currentFilePath, txtEditor.Text, New UTF8Encoding(True))
                 isModified = False
                 AddRecent(currentFilePath)
+                ClearAutosave()
                 Return True
             Catch ex As Exception
                 MessageBox.Show("Could not save file: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -765,6 +859,7 @@ Public Class NotepadWindow
                     isModified = False
                     UpdateTitle()
                     AddRecent(sfd.FileName)
+                    ClearAutosave()
                     Return True
                 Catch ex As Exception
                     MessageBox.Show("Could not save file: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -791,6 +886,9 @@ Public Class NotepadWindow
         If Not ConfirmSaveIfNeeded() Then
             e.Cancel = True
         Else
+            SaveNotepadSettings()
+            autosaveTimer.Stop()
+            ClearAutosave()        ' clean exit -> no draft to recover
             HideSuggestions()
             If suggWin IsNot Nothing Then suggWin.Dispose()
         End If
@@ -842,13 +940,366 @@ Public Class NotepadWindow
         mnuWordWrap.Checked = Not mnuWordWrap.Checked
         txtEditor.WordWrap = mnuWordWrap.Checked
         txtEditor.ScrollBars = If(mnuWordWrap.Checked, ScrollBars.Vertical, ScrollBars.Both)
+        SaveNotepadSettings()
     End Sub
 
     Private Sub MnuFont_Click(sender As Object, e As EventArgs)
         Using fd As New FontDialog()
             fd.Font = txtEditor.Font
-            If fd.ShowDialog() = DialogResult.OK Then txtEditor.Font = fd.Font
+            If fd.ShowDialog() = DialogResult.OK Then
+                txtEditor.Font = fd.Font
+                UpdateZoomIndicator()
+                SaveNotepadSettings()
+            End If
         End Using
+    End Sub
+
+    ' === English (non-phonetic) word suggestions ========================
+
+    Private Sub TxtEditor_KeyUp(sender As Object, e As KeyEventArgs)
+        If phoneticMode Then Return
+        ' Don't re-trigger on navigation / accept / modifier keys.
+        Select Case e.KeyCode
+            Case Keys.Up, Keys.Down, Keys.Left, Keys.Right, Keys.Home, Keys.End,
+                 Keys.PageUp, Keys.PageDown, Keys.Tab, Keys.Escape, Keys.Enter, Keys.Return,
+                 Keys.ControlKey, Keys.ShiftKey, Keys.Menu
+                Return
+        End Select
+        If e.Control Then Return
+        ShowEnglishSuggestions()
+    End Sub
+
+    ''' <summary>Finds the word ending at the caret (chars to the left only).</summary>
+    Private Sub CurrentWordBeforeCaret(ByRef startIndex As Integer, ByRef length As Integer)
+        Dim caret As Integer = txtEditor.SelectionStart
+        Dim txt As String = txtEditor.Text
+        Dim s As Integer = caret
+        While s > 0 AndAlso IsWordChar(txt(s - 1))
+            s -= 1
+        End While
+        startIndex = s
+        length = caret - s
+    End Sub
+
+    Private Sub ShowEnglishSuggestions()
+        Try
+            If Not suggestionsEnabled OrElse phoneticMode OrElse suggWin Is Nothing Then
+                HideSuggestions() : Return
+            End If
+            Dim s As Integer, l As Integer
+            CurrentWordBeforeCaret(s, l)
+            If l < 2 Then HideSuggestions() : Return
+            Dim w As String = txtEditor.Text.Substring(s, l)
+            If Not SuggestionEngine.IsRoman(w) Then HideSuggestions() : Return
+            Dim list As List(Of String) = SuggestionEngine.GetSuggestions(w)
+            If list Is Nothing OrElse list.Count = 0 Then HideSuggestions() : Return
+            engWordStart = s
+            engWordLen = l
+            suggWin.ShowCandidates(list, CaretScreenPoint())
+        Catch
+            HideSuggestions()
+        End Try
+    End Sub
+
+    Private Sub AcceptEnglishSuggestion(ByVal index As Integer)
+        Try
+            Dim full As String = suggWin.ItemAt(index)
+            If String.IsNullOrEmpty(full) Then Return
+            If engWordStart >= 0 AndAlso engWordStart + engWordLen <= txtEditor.TextLength Then
+                txtEditor.Select(engWordStart, engWordLen)
+                txtEditor.SelectedText = full
+                txtEditor.SelectionStart = engWordStart + full.Length
+            End If
+            Try
+                SuggestionEngine.Learn(full)
+            Catch
+            End Try
+        Catch
+        Finally
+            HideSuggestions()
+        End Try
+    End Sub
+
+    ' === Insert: emoji & symbol pickers =================================
+
+    Private Function BuildEmojiMenu() As ToolStripMenuItem
+        Dim m As New ToolStripMenuItem("&Emoji")
+        Dim emojis As String() = {
+            "😊", "😃", "😂", "🥰", "😍", "😉", "😎", "🤔", "😢", "😭",
+            "😡", "👍", "👎", "🙏", "❤️", "🔥", "🎉", "✅", "❌", "⭐",
+            "💯", "🌟", "🎂", "🌹", "☀️", "🌙", "💡", "📌", "✍️", "🇧🇩"}
+        For Each ej As String In emojis
+            Dim ch As String = ej
+            Dim it As New ToolStripMenuItem(ch)
+            AddHandler it.Click, Sub() InsertAtCaret(ch)
+            m.DropDownItems.Add(it)
+        Next
+        Return m
+    End Function
+
+    Private Function BuildSymbolMenu() As ToolStripMenuItem
+        Dim m As New ToolStripMenuItem("Bangla &Symbol")
+        ' label -> text to insert
+        Dim pairs As New List(Of KeyValuePair(Of String, String))() From {
+            New KeyValuePair(Of String, String)("। (দাঁড়ি)", "।"),
+            New KeyValuePair(Of String, String)("৳ (টাকা)", "৳"),
+            New KeyValuePair(Of String, String)("ঃ (বিসর্গ)", "ঃ"),
+            New KeyValuePair(Of String, String)("ং (অনুস্বার)", "ং"),
+            New KeyValuePair(Of String, String)("ঁ (চন্দ্রবিন্দু)", "ঁ"),
+            New KeyValuePair(Of String, String)("় (নুক্তা)", "়"),
+            New KeyValuePair(Of String, String)("্ (হসন্ত)", "্"),
+            New KeyValuePair(Of String, String)("ৎ (খণ্ড ত)", "ৎ"),
+            New KeyValuePair(Of String, String)("“ ” (উদ্ধৃতি)", "“”"),
+            New KeyValuePair(Of String, String)("— (ড্যাশ)", "—")}
+        For Each kv In pairs
+            Dim text As String = kv.Value
+            Dim it As New ToolStripMenuItem(kv.Key)
+            AddHandler it.Click, Sub() InsertAtCaret(text)
+            m.DropDownItems.Add(it)
+        Next
+        Return m
+    End Function
+
+    ''' <summary>Inserts text at the caret, replacing any selection, and keeps focus.</summary>
+    Private Sub InsertAtCaret(ByVal text As String)
+        ResetComposition()
+        Dim at As Integer = txtEditor.SelectionStart
+        txtEditor.SelectedText = text
+        txtEditor.SelectionStart = at + text.Length
+        txtEditor.Focus()
+    End Sub
+
+    ' === Insert: Bangla date / number conversion ========================
+
+    Private Shared ReadOnly BnDigits As Char() = {"০"c, "১"c, "২"c, "৩"c, "৪"c, "৫"c, "৬"c, "৭"c, "৮"c, "৯"c}
+
+    Public Shared Function ToBanglaDigits(ByVal s As String) As String
+        If String.IsNullOrEmpty(s) Then Return s
+        Dim sb As New StringBuilder(s.Length)
+        For Each c As Char In s
+            If c >= "0"c AndAlso c <= "9"c Then
+                sb.Append(BnDigits(AscW(c) - AscW("0"c)))
+            Else
+                sb.Append(c)
+            End If
+        Next
+        Return sb.ToString()
+    End Function
+
+    Public Shared Function ToEnglishDigits(ByVal s As String) As String
+        If String.IsNullOrEmpty(s) Then Return s
+        Dim sb As New StringBuilder(s.Length)
+        For Each c As Char In s
+            Dim u As Integer = AscW(c)
+            If u >= &H9E6 AndAlso u <= &H9EF Then       ' Bengali digits ০-৯
+                sb.Append(ChrW(AscW("0"c) + (u - &H9E6)))
+            Else
+                sb.Append(c)
+            End If
+        Next
+        Return sb.ToString()
+    End Function
+
+    Private Shared ReadOnly BnMonths As String() = {
+        "জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন",
+        "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"}
+    Private Shared ReadOnly BnWeekdays As String() = {
+        "রবিবার", "সোমবার", "মঙ্গলবার", "বুধবার", "বৃহস্পতিবার", "শুক্রবার", "শনিবার"}
+
+    Private Shared Function BanglaDateString(ByVal includeTime As Boolean) As String
+        Dim now As DateTime = DateTime.Now
+        Dim s As String = BnWeekdays(CInt(now.DayOfWeek)) & ", " &
+                          ToBanglaDigits(now.Day.ToString()) & " " &
+                          BnMonths(now.Month - 1) & " " &
+                          ToBanglaDigits(now.Year.ToString())
+        If includeTime Then
+            s &= ", " & ToBanglaDigits(now.ToString("hh:mm")) & " " &
+                 If(now.Hour < 12, "পূর্বাহ্ন", "অপরাহ্ন")
+        End If
+        Return s
+    End Function
+
+    Private Sub MnuBanglaDate_Click(sender As Object, e As EventArgs)
+        InsertAtCaret(BanglaDateString(False))
+    End Sub
+
+    Private Sub MnuBanglaDateTime_Click(sender As Object, e As EventArgs)
+        InsertAtCaret(BanglaDateString(True))
+    End Sub
+
+    Private Sub MnuNumbersToBangla_Click(sender As Object, e As EventArgs)
+        ConvertNumbers(AddressOf ToBanglaDigits)
+    End Sub
+
+    Private Sub MnuNumbersToEnglish_Click(sender As Object, e As EventArgs)
+        ConvertNumbers(AddressOf ToEnglishDigits)
+    End Sub
+
+    ''' <summary>Applies a digit converter to the selection (or whole text if nothing is selected).</summary>
+    Private Sub ConvertNumbers(ByVal convert As Func(Of String, String))
+        ResetComposition()
+        If txtEditor.SelectionLength > 0 Then
+            Dim at As Integer = txtEditor.SelectionStart
+            Dim converted As String = convert(txtEditor.SelectedText)
+            txtEditor.SelectedText = converted
+            txtEditor.Select(at, converted.Length)
+        Else
+            Dim caret As Integer = txtEditor.SelectionStart
+            txtEditor.Text = convert(txtEditor.Text)
+            txtEditor.SelectionStart = Math.Min(caret, txtEditor.TextLength)
+        End If
+    End Sub
+
+    ' === Bijoy ANSI -> Unicode (reverse) ================================
+
+    Private Sub MnuPasteBijoy_Click(sender As Object, e As EventArgs)
+        Try
+            If Not Clipboard.ContainsText() Then Return
+            Dim ansi As String = Clipboard.GetText()
+            InsertAtCaret(BijoyConverter.BijoyToUnicode(ansi))
+        Catch ex As Exception
+            MessageBox.Show("Could not paste Bijoy text: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+    End Sub
+
+    Private Sub MnuImportBijoy_Click(sender As Object, e As EventArgs)
+        If Not ConfirmSaveIfNeeded() Then Return
+        Using ofd As New OpenFileDialog()
+            ofd.Filter = "Text Documents (*.txt)|*.txt|All Files (*.*)|*.*"
+            ofd.Title = "Import Bijoy ANSI File"
+            If ofd.ShowDialog() = DialogResult.OK Then
+                Try
+                    ResetComposition()
+                    ' Legacy Bijoy files are single-byte Windows ANSI (codepage 1252).
+                    Dim ansi As String = File.ReadAllText(ofd.FileName, Encoding.GetEncoding(1252))
+                    txtEditor.Text = BijoyConverter.BijoyToUnicode(ansi)
+                    currentFilePath = ""   ' imported/converted: treat as a new unsaved doc
+                    isModified = True
+                    UpdateTitle()
+                Catch ex As Exception
+                    MessageBox.Show("Could not import: " & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                End Try
+            End If
+        End Using
+    End Sub
+
+    ' === spell check ====================================================
+
+    Private Shared Function IsBanglaChar(ByVal c As Char) As Boolean
+        Dim u As Integer = AscW(c)
+        Return u >= &H980 AndAlso u <= &H9FF
+    End Function
+
+    Private Sub MnuSpellCheck_Click(sender As Object, e As EventArgs)
+        ResetComposition()
+        Dim txt As String = txtEditor.Text
+        Dim i As Integer = 0
+        Dim n As Integer = txt.Length
+        Dim flagged As Integer = 0
+
+        While i < n
+            If IsBanglaChar(txt(i)) Then
+                Dim start As Integer = i
+                While i < n AndAlso IsBanglaChar(txt(i))
+                    i += 1
+                End While
+                Dim word As String = txt.Substring(start, i - start)
+                If Not SuggestionEngine.IsKnownWord(word) Then
+                    flagged += 1
+                    txtEditor.Select(start, word.Length)
+                    txtEditor.ScrollToCaret()
+
+                    Dim sugg As List(Of String) = SuggestionEngine.GetSuggestions(word)
+                    Dim suggestText As String = ""
+                    If sugg IsNot Nothing AndAlso sugg.Count > 0 Then
+                        suggestText = "Suggestions: " & String.Join(", ", sugg.GetRange(0, Math.Min(5, sugg.Count))) & vbCrLf & vbCrLf
+                    End If
+
+                    Dim replacement As String = Microsoft.VisualBasic.Interaction.InputBox(
+                        "Unknown word: """ & word & """" & vbCrLf & vbCrLf & suggestText &
+                        "Type a correction and press OK to replace, or leave unchanged to skip." & vbCrLf &
+                        "(Press Cancel to stop checking.)",
+                        "Spell Check", word)
+
+                    If replacement Is Nothing OrElse replacement = "" Then
+                        ' Cancel pressed -> InputBox returns "" ; ask whether to stop.
+                        ' (Empty also means user cleared it; we only stop on explicit Cancel which yields "")
+                        Exit While
+                    ElseIf replacement <> word Then
+                        txtEditor.SelectedText = replacement
+                        ' learn the user's correction so it isn't flagged next time
+                        Try
+                            SuggestionEngine.AddCustomWord(replacement)
+                        Catch
+                        End Try
+                        ' continue scanning from after the replacement
+                        txt = txtEditor.Text
+                        n = txt.Length
+                        i = start + replacement.Length
+                    End If
+                End If
+            Else
+                i += 1
+            End If
+        End While
+
+        If flagged = 0 Then
+            MessageBox.Show("No spelling issues found.", "Spell Check", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        End If
+    End Sub
+
+    ' === auto-save / crash recovery =====================================
+
+    Private Shared Function AutosavePath() As String
+        Return Path.Combine(RecentFolder(), "notepad_autosave.txt")
+    End Function
+
+    Private Shared Function AutosaveMetaPath() As String
+        Return Path.Combine(RecentFolder(), "notepad_autosave.path")
+    End Function
+
+    Private Sub AutosaveTimer_Tick(sender As Object, e As EventArgs) Handles autosaveTimer.Tick
+        Try
+            If Not isModified Then Return
+            If txtEditor.TextLength = 0 Then Return
+            Directory.CreateDirectory(RecentFolder())
+            File.WriteAllText(AutosavePath(), txtEditor.Text, New UTF8Encoding(True))
+            File.WriteAllText(AutosaveMetaPath(), If(currentFilePath, ""), Encoding.UTF8)
+        Catch
+        End Try
+    End Sub
+
+    Private Sub ClearAutosave()
+        Try
+            If File.Exists(AutosavePath()) Then File.Delete(AutosavePath())
+            If File.Exists(AutosaveMetaPath()) Then File.Delete(AutosaveMetaPath())
+        Catch
+        End Try
+    End Sub
+
+    ''' <summary>If a recovery draft from a previous (crashed) session exists, offer to restore it.</summary>
+    Private Sub OfferDraftRecovery()
+        Try
+            If Not File.Exists(AutosavePath()) Then Return
+            Dim draft As String = File.ReadAllText(AutosavePath(), Encoding.UTF8)
+            If String.IsNullOrWhiteSpace(draft) Then ClearAutosave() : Return
+
+            Dim res As DialogResult = MessageBox.Show(
+                "An unsaved draft from a previous session was found." & vbCrLf &
+                "Do you want to recover it?", "BanglaType Notepad - Recovery",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+            If res = DialogResult.Yes Then
+                txtEditor.Text = draft
+                Dim origPath As String = ""
+                If File.Exists(AutosaveMetaPath()) Then origPath = File.ReadAllText(AutosaveMetaPath(), Encoding.UTF8).Trim()
+                currentFilePath = origPath
+                isModified = True
+                UpdateTitle()
+            Else
+                ClearAutosave()
+            End If
+        Catch
+        End Try
     End Sub
 End Class
 

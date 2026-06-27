@@ -1,0 +1,53 @@
+name: Build
+
+# Compiles the BanglaType solution on every push / PR so build breaks are caught early.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
+
+      - name: Restore packages
+        run: nuget restore BanglaType.sln
+
+      - name: Build (Release)
+        run: msbuild BanglaType.sln /p:Configuration=Release /p:Platform="Any CPU" /m
+
+      - name: Upload build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: BanglaType-Release
+          path: bin/Release/
+          if-no-files-found: ignore
+
+  test:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # Standalone unit tests for the self-contained converters (net48 target).
+      - name: Run converter tests
+        run: dotnet test Tests/BanglaType.Tests.vbproj --configuration Release

@@ -30,6 +30,16 @@ Module AppSettings
     Public PrivacyConsent As Boolean = False      ' User privacy consent
     Public DefaultLang As String = "en"           ' Default language ("bn" or "en")
 
+    ' --- BanglaType Notepad preferences (remembered across sessions) ---
+    Public NotepadPhonetic As Boolean = True      ' Banglish (Avro phonetic) typing on/off
+    Public NotepadSuggestions As Boolean = True   ' live word suggestions
+    Public NotepadAutoCorrect As Boolean = True   ' auto-correct on word commit
+    Public NotepadMacros As Boolean = True         ' text-expansion macros
+    Public NotepadWordWrap As Boolean = True       ' editor word wrap
+    Public NotepadDark As Boolean = False          ' dark mode
+    Public NotepadFontName As String = "Nirmala UI"
+    Public NotepadFontSize As Single = 12.0F
+
     Private Function SettingsFolder() As String
         Return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BanglaType")
     End Function
@@ -59,6 +69,15 @@ Module AppSettings
             FirstRun = GetBool(root, "FirstRun", FirstRun)
             PrivacyConsent = GetBool(root, "PrivacyConsent", PrivacyConsent)
             DefaultLang = GetStr(root, "DefaultLang", DefaultLang)
+
+            NotepadPhonetic = GetBool(root, "NotepadPhonetic", NotepadPhonetic)
+            NotepadSuggestions = GetBool(root, "NotepadSuggestions", NotepadSuggestions)
+            NotepadAutoCorrect = GetBool(root, "NotepadAutoCorrect", NotepadAutoCorrect)
+            NotepadMacros = GetBool(root, "NotepadMacros", NotepadMacros)
+            NotepadWordWrap = GetBool(root, "NotepadWordWrap", NotepadWordWrap)
+            NotepadDark = GetBool(root, "NotepadDark", NotepadDark)
+            NotepadFontName = GetStr(root, "NotepadFontName", NotepadFontName)
+            NotepadFontSize = GetSingle(root, "NotepadFontSize", NotepadFontSize)
         Catch
             ' Keep defaults on any read/parse error.
         End Try
@@ -80,7 +99,15 @@ Module AppSettings
                      New XElement("GeminiApiKey", GeminiApiKey),
                      New XElement("FirstRun", FirstRun),
                      New XElement("PrivacyConsent", PrivacyConsent),
-                     New XElement("DefaultLang", DefaultLang)))
+                     New XElement("DefaultLang", DefaultLang),
+                     New XElement("NotepadPhonetic", NotepadPhonetic),
+                     New XElement("NotepadSuggestions", NotepadSuggestions),
+                     New XElement("NotepadAutoCorrect", NotepadAutoCorrect),
+                     New XElement("NotepadMacros", NotepadMacros),
+                     New XElement("NotepadWordWrap", NotepadWordWrap),
+                     New XElement("NotepadDark", NotepadDark),
+                     New XElement("NotepadFontName", NotepadFontName),
+                     New XElement("NotepadFontSize", NotepadFontSize.ToString(System.Globalization.CultureInfo.InvariantCulture))))
             doc.Save(SettingsPath())
         Catch
             ' Best-effort persistence; ignore disk errors.
@@ -97,6 +124,13 @@ Module AppSettings
         Dim e As XElement = root.Element(name)
         Dim v As Integer
         If e IsNot Nothing AndAlso Integer.TryParse(e.Value, v) Then Return v
+        Return fallback
+    End Function
+
+    Private Function GetSingle(root As XElement, name As String, fallback As Single) As Single
+        Dim e As XElement = root.Element(name)
+        Dim v As Single
+        If e IsNot Nothing AndAlso Single.TryParse(e.Value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, v) Then Return v
         Return fallback
     End Function
 

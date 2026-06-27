@@ -813,6 +813,16 @@ Public Module SuggestionEngine
         Return freq.Count
     End Function
 
+    ''' <summary>
+    ''' True if the word is present in the frequency dictionary (i.e. a recognised
+    ''' spelling). Used by the Notepad spell-checker to flag unknown words.
+    ''' </summary>
+    Public Function IsKnownWord(ByVal word As String) As Boolean
+        If String.IsNullOrWhiteSpace(word) Then Return True
+        EnsureLoaded()
+        Return freq.ContainsKey(word)
+    End Function
+
     Public Sub OpenAutoCorrectInNotepad()
         EnsureLoaded()
         Try
