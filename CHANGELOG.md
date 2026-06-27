@@ -4,6 +4,26 @@ All notable changes to **BanglaType** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.3] - 2026-06-27
+
+### Added
+- **Shared `UiTheme` styler** — a single, theme-aware engine that gives the
+  secondary windows (About, Text Converter) consistent backgrounds, flat
+  buttons with hover/press feedback, accent primary-action buttons, and
+  readable content surfaces across all 16 built-in themes (light and dark).
+- **WiX MSI installer** (`BanglaType.wxs`) producing `BanglaType-1.0.3.msi`
+  alongside the existing Inno Setup `.exe`.
+
+### Changed
+- **Topbar UI refresh**: the mode label is now colour-coded — green for
+  **Bangla**, red for **Banglish**, neutral grey for **English** — every topbar
+  button gains theme-tinted hover/press feedback and a hand cursor, and the bar
+  is painted with a subtle vertical gradient sheen for a more premium look.
+- About and Text Converter dialogs now theme themselves through `UiTheme`
+  instead of ad-hoc per-window colour code.
+- Assembly, Inno (`BanglaType.iss`) and WiX (`BanglaType.wxs`) versions bumped
+  to **1.0.3**.
+
 ## [1.0.2] - 2026-06-27
 
 ### Added
@@ -52,6 +72,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Initial release: phonetic & fixed Bangla layouts, suggestions, voice typing,
   clipboard manager, custom layout builder, and Windows installer.
 
+[1.0.3]: https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/releases/tag/v1.0.3
 [1.0.2]: https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/releases/tag/v1.0.2
 [1.0.1]: https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/releases/tag/v1.0.1
 [1.0.0]: https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/releases/tag/v1.0.0

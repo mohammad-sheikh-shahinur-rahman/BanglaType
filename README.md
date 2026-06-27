@@ -39,6 +39,10 @@
 ### 6. Crash-Free Guarantee (Safe Mode)
 * Launch with the argument `BanglaType.exe --safe` to bypass advanced keyboard hook / suggestion engine startup cycles for absolute typing recovery and stable debugging.
 
+### 7. Polished, Theme-Aware Interface
+* **16 built-in themes** (Cream, Light, Dark, Ocean, Midnight Purple, Neon Cyberpunk, Amoled, Synthwave Dracula, Sakura, Forest Moss, Nordic Frost, Solarized Light/Dark, Monokai Pro, Retro Terminal) applied live to the topbar, suggestion popup, and dialogs.
+* **Colour-coded mode indicator** on the topbar — green for **Bangla**, red for **Banglish**, grey for **English** — with theme-tinted hover feedback and a subtle gradient sheen.
+
 ---
 
 ## 📖 Quick Start & Migration Guide
@@ -63,11 +67,12 @@
 ---
 
 ## 📥 Downloads & Releases
-Download standalone executables, portable ZIP packages, and the professional setup installer directly from the [GitHub Releases Page](https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/releases/tag/v1.0.1) or locate them inside the [Releases/](file:///C:/Users/shahi/Downloads/Compressed/BanglaType/Releases) folder:
-* **Professional Setup Installer**: [BanglaTypeInstaller.exe](file:///C:/Users/shahi/Downloads/Compressed/BanglaType/Releases/BanglaTypeInstaller.exe)
-* **Standalone Executable**: [BanglaType.exe](file:///C:/Users/shahi/Downloads/Compressed/BanglaType/Releases/BanglaType.exe)
-* **64-bit Portable Edition**: [BanglaType_Portable_x64.zip](file:///C:/Users/shahi/Downloads/Compressed/BanglaType/Releases/BanglaType_Portable_x64.zip)
-* **32-bit Portable Edition**: [BanglaType_Portable_x86.zip](file:///C:/Users/shahi/Downloads/Compressed/BanglaType/Releases/BanglaType_Portable_x86.zip)
+Grab the latest installers from the **[GitHub Releases Page](https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/releases/latest)**. The current release is **v1.0.3**:
+
+* **Professional Setup Installer (recommended)** — bundles the Visual C++ runtimes: [BanglaTypeInstaller-1.0.3.exe](https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/releases/download/v1.0.3/BanglaTypeInstaller-1.0.3.exe)
+* **MSI Package** — per-machine install (install the VC++ runtime separately if needed): [BanglaType-1.0.3.msi](https://github.com/mohammad-sheikh-shahinur-rahman/BanglaType/releases/download/v1.0.3/BanglaType-1.0.3.msi)
+
+> See the [CHANGELOG](CHANGELOG.md) for what's new in each release.
 
 ---
 
