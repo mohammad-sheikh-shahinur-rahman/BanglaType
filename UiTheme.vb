@@ -61,9 +61,9 @@ Public Module UiTheme
         If t < 0 Then t = 0
         If t > 1 Then t = 1
         Return Color.FromArgb(
-            Math.Min(255, Math.Max(0, CInt(Math.Truncate(a.R + (b.R - a.R) * t)))),
-            Math.Min(255, Math.Max(0, CInt(Math.Truncate(a.G + (b.G - a.G) * t)))),
-            Math.Min(255, Math.Max(0, CInt(Math.Truncate(a.B + (b.B - a.B) * t)))))
+            Math.Min(255, Math.Max(0, CInt(Math.Truncate(CInt(a.R) + (CInt(b.R) - CInt(a.R)) * t)))),
+            Math.Min(255, Math.Max(0, CInt(Math.Truncate(CInt(a.G) + (CInt(b.G) - CInt(a.G)) * t)))),
+            Math.Min(255, Math.Max(0, CInt(Math.Truncate(CInt(a.B) + (CInt(b.B) - CInt(a.B)) * t)))))
     End Function
 
     ''' <summary>Black or white, whichever reads better on the given background.</summary>

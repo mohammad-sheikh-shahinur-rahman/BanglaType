@@ -24,25 +24,25 @@ Imports Microsoft.VisualBasic.CompilerServices
 
 
 Module Keyboard
-    <DllImport("user32.dll", CharSet:=CharSet.Ansi)>
-    Public Function UnhookWindowsHookEx(ByVal hHook As Integer) As Integer
+    <DllImport("user32.dll", CharSet:=CharSet.Auto)>
+    Public Function UnhookWindowsHookEx(ByVal hHook As IntPtr) As Boolean
     End Function
 
-    <DllImport("user32.dll", EntryPoint:="SetWindowsHookExA", CharSet:=CharSet.Ansi)>
+    <DllImport("user32.dll", EntryPoint:="SetWindowsHookEx", CharSet:=CharSet.Auto)>
     Public Function SetWindowsHookEx(ByVal idHook As Integer,
-      ByVal lpfn As KeyboardHookDelegate, ByVal hmod As Integer,
-      ByVal dwThreadId As Integer) As Integer
+      ByVal lpfn As KeyboardHookDelegate, ByVal hmod As IntPtr,
+      ByVal dwThreadId As UInteger) As IntPtr
     End Function
 
     <DllImport("user32.dll", CharSet:=CharSet.Ansi)>
     Private Function GetAsyncKeyState(ByVal vKey As Integer) As Integer
     End Function
 
-    <DllImport("user32.dll", CharSet:=CharSet.Ansi)>
-    Private Function CallNextHookEx(ByVal hHook As Integer,
+    <DllImport("user32.dll", CharSet:=CharSet.Auto)>
+    Private Function CallNextHookEx(ByVal hHook As IntPtr,
       ByVal nCode As Integer,
-      ByVal wParam As Integer,
-      ByVal lParam As KBDLLHOOKSTRUCT) As Integer
+      ByVal wParam As IntPtr,
+      ByRef lParam As KBDLLHOOKSTRUCT) As IntPtr
     End Function
 
     Public Structure KBDLLHOOKSTRUCT
@@ -69,7 +69,7 @@ Module Keyboard
     Public Const VK_DELETE = &H2E
 
     Private Const WH_KEYBOARD_LL As Integer = 13&
-    Public KeyboardHandle As Integer
+    Public KeyboardHandle As IntPtr
 
 
 
@@ -866,10 +866,10 @@ LoopStart:
     End Sub
 
     Public Function KeyboardCallback(ByVal Code As Integer,
-      ByVal wParam As Integer,
-      ByRef lParam As KBDLLHOOKSTRUCT) As Integer
+      ByVal wParam As IntPtr,
+      ByRef lParam As KBDLLHOOKSTRUCT) As IntPtr
 
-        If Code = HC_ACTION And wParam = WM_KEYDOWN Then
+        If Code = HC_ACTION AndAlso wParam.ToInt32() = WM_KEYDOWN Then
             Debug.WriteLine("Calling IsHooked")
             If Not (block) Then
                 AnalyticsEngine.RecordKey(lParam.vkCode)
@@ -888,8 +888,8 @@ LoopStart:
 
     Public Delegate Function KeyboardHookDelegate(
       ByVal Code As Integer,
-      ByVal wParam As Integer, ByRef lParam As KBDLLHOOKSTRUCT) _
-                   As Integer
+      ByVal wParam As IntPtr, ByRef lParam As KBDLLHOOKSTRUCT) _
+                   As IntPtr
 
     <MarshalAs(UnmanagedType.FunctionPtr)>
     Private callback As KeyboardHookDelegate
@@ -900,7 +900,7 @@ LoopStart:
         KeyboardHandle = SetWindowsHookEx(
           WH_KEYBOARD_LL, callback,
           Marshal.GetHINSTANCE(
-          [Assembly].GetExecutingAssembly.GetModules()(0)).ToInt32, 0)
+          [Assembly].GetExecutingAssembly.GetModules()(0)), 0)
 
         Call CheckHooked()
     End Sub
@@ -913,8 +913,8 @@ LoopStart:
         End If
     End Sub
 
-    Private Function Hooked()
-        Hooked = KeyboardHandle <> 0
+    Private Function Hooked() As Boolean
+        Return KeyboardHandle <> IntPtr.Zero
     End Function
 
     Public Sub UnhookKeyboard()
