@@ -4,6 +4,18 @@ All notable changes to **BanglaType** are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.6] - 2026-06-28
+
+### Added
+- **Bijoy (UniBijoy) keyboard layout** — the OmicronLab UniBijoy fixed layout
+  (Bijoy key positions, Unicode output) is now bundled in `data/Bijoy.json` and
+  auto-discovered at startup, appearing as a selectable layout alongside Avro,
+  Borno, Munir Optima, Probhat and National (Jatiya).
+
+### Changed
+- Assembly, Inno (`BanglaType.iss`) and WiX (`BanglaType.wxs`) versions bumped
+  to **1.0.6**.
+
 ## [1.0.5] - 2026-06-27
 
 ### Fixed
